@@ -80,9 +80,7 @@ const loadTokens = () => { try { return JSON.parse(safeStorage.decryptString(fs.
 let pending = null;
 handle('ms-login-start', async () => {
   pending?.cancel();
-  const { clientId } = L.getSettings();
-  if (!clientId) throw new Error(I.t('err.need_client_id'));
-  const login = (pending = await A.startDeviceLogin(clientId));
+  const login = (pending = await A.startDeviceLogin(A.CLIENT_ID));
   login.done
     .then(r => { saveTokens(r); L.saveSettings({ account: { name: r.mc.name, uuid: r.mc.uuid } }); send('ms-login', 'done', r.mc.name); })
     .catch(e => send('ms-login', 'error', e.message))
@@ -101,11 +99,11 @@ async function msAuth() {
   let t = loadTokens();
   if (!t) throw new Error(I.t('err.ms_missing'));
   if (Date.now() > t.mc.expiresAt) {
-    t = await A.refreshLogin(s.clientId, t.refreshToken);
+    t = await A.refreshLogin(A.CLIENT_ID, t.refreshToken);
     saveTokens(t);
     if (t.mc.name !== s.account.name) L.saveSettings({ account: { name: t.mc.name, uuid: t.mc.uuid } });
   }
-  return { ...t.mc, clientId: s.clientId };
+  return { ...t.mc, clientId: A.CLIENT_ID };
 }
 
 handle('launch', async id => {

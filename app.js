@@ -685,7 +685,6 @@ function applySettings(s) {
   form.ram.value = s.ram;
   form.javaPath.value = s.javaPath || '';
   $('#ram-val').textContent = (s.ram / 1024).toFixed(1).replace('.0', '') + ' GB';
-  form.clientId.value = s.clientId || '';
   const name = s.account?.name || s.username;
   $('#acc-name').textContent = name;
   $('#acc-kind').textContent = t(s.account ? 'acc.msa' : 'acc.offline');
@@ -696,15 +695,11 @@ function applySettings(s) {
 }
 
 // ---------- Microsoft login (device code: user types the code on microsoft.com) ----------
-form.clientId.onchange = async () => {
-  try { applySettings(await api.invoke('save-settings', { clientId: form.clientId.value.trim() })); } catch (e) { toast(errMsg(e), true); }
-};
 let msLogin = null;
 $('#ms-login').onclick = async () => {
   const btn = $('#ms-login');
   btn.disabled = true;
   try {
-    applySettings(await api.invoke('save-settings', { clientId: form.clientId.value.trim() }));
     msLogin = await api.invoke('ms-login-start');
     $('#ms-code').textContent = msLogin.userCode;
     $('#ms-status').textContent = t('ms.wait');

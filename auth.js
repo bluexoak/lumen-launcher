@@ -1,5 +1,7 @@
 // Microsoft account → Minecraft token: device-code login, then Xbox Live → XSTS → Minecraft services.
-// Needs a user-registered Azure app (public client flows on) that Mojang has approved for the Minecraft API.
+// Lumen's own Azure app (public client, no secret): the ID is public by design, every sign-in shows it to Microsoft anyway.
+// Mojang has to approve it for the Minecraft API; until then the Minecraft step of the login is refused.
+const CLIENT_ID = '2ba9db56-f582-4cbd-89c9-3d72200548e7';
 const MS = 'https://login.microsoftonline.com/consumers/oauth2/v2.0';
 const SCOPE = 'XboxLive.signin offline_access';
 const UA = 'lumen-launcher/0.1 (+https://github.com/bluexoak/lumen-launcher)';
@@ -95,7 +97,7 @@ async function minecraftLogin(ms) {
   };
 }
 
-module.exports = { startDeviceLogin, refreshLogin, AuthError };
+module.exports = { CLIENT_ID, startDeviceLogin, refreshLogin, AuthError };
 
 if (require.main === module) { // node auth.js → self-check against a fake Microsoft/Xbox/Mojang
   const assert = require('assert');

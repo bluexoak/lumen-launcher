@@ -21,7 +21,7 @@ The builds aren't code-signed yet: if SmartScreen says *"Windows protected your 
 - **Java handled for you**: an installed JDK/JRE of the right version is used, otherwise Eclipse Temurin is downloaded and verified
 - **Five layouts** – Art Book, Carousel, List, Shelf, Terminal – and **five colour schemes**, freely combinable
 - **Controller support**: d-pad to browse, A to play, B to go back, Y to switch views
-- **Offline play** with a player name, or **Microsoft sign-in** (needs your own Azure app approved for the Minecraft API, see below)
+- **Offline play** with a player name, or **Microsoft sign-in** (see below)
 - **English and German** UI, following the system language by default
 
 Forge and NeoForge are not supported yet.
@@ -45,12 +45,9 @@ Self-checks: `npm test` (launcher logic), `node auth.js` (Microsoft sign-in flow
 
 ## Microsoft sign-in
 
-Lumen uses the device-code flow, so no secret is involved, but Microsoft only lets approved apps talk to the Minecraft services:
+Lumen uses the device-code flow with its own Azure app (public client, no secret; the client ID lives in `auth.js`). Microsoft only lets apps approved for the Minecraft API talk to the Minecraft services, so sign-in works once that approval is through.
 
-1. Register an app in the [Microsoft Entra admin center](https://entra.microsoft.com) → *App registrations* → *New registration*, account type **Personal Microsoft accounts only**.
-2. Under *Authentication*, set **Allow public client flows** to **Yes**.
-3. Apply for Minecraft API access for that app (Microsoft/Mojang review form: `aka.ms/mce-reviewappid`).
-4. Paste the app's *Application (client) ID* into Lumen → Settings → Microsoft account.
+Building your own fork? Register your own app in the [Microsoft Entra admin center](https://entra.microsoft.com) (account type **Personal Microsoft accounts only**, **Allow public client flows** on), apply for Minecraft API access (`aka.ms/mce-reviewappid`) and put its *Application (client) ID* into `CLIENT_ID` in `auth.js`.
 
 Tokens are stored encrypted with Windows DPAPI (`%APPDATA%\.lumen\account.bin`).
 

@@ -340,7 +340,6 @@ const SETTINGS = {
   username: v => /^\w{3,16}$/.test(v) || I.t('err.name'),
   ram: v => (Number.isInteger(v) && v >= 1024 && v <= 65536) || 'ram: 1024–65536 MB',
   javaPath: v => v === '' || javaPathOk(v) || I.t('err.java_path'),
-  clientId: v => v === '' || /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v) || I.t('err.client_id'),
   theme: v => ['nacht', 'papier', 'neon', 'pixel', 'poster'].includes(v) || 'theme',
   layout: v => ['book', 'carousel', 'list', 'shelf', 'terminal'].includes(v) || 'layout',
   language: v => ['auto', 'de', 'en'].includes(v) || 'language',
@@ -508,7 +507,6 @@ if (require.main === module) { // node launcher.js → self-check
   assert.throws(() => safeJoin('C:\\x', '..\\evil'));
   const out = []; logPump(s => out.push(s))('<log4j:Event logger="a" level="INFO" thread="m"><log4j:Message><![CDATA[Hallo]]></log4j:Message></log4j:Event>\nplain\n');
   assert.deepEqual(out, ['[INFO] Hallo\n', 'plain\n']);
-  assert.throws(() => saveSettings({ clientId: 'nope' }), /Format/);
   for (const bad of ['..', '../..', '.', 'a/../..', 'A', '']) assert.throws(() => instDir(bad), /invalid instance id/);
   assert.ok(instDir('survival-0c5e').endsWith('survival-0c5e'));
   for (const bad of ['..', '../x.jar', 'x.exe', 'sub\\x.jar']) assert.throws(() => modFile('survival-0c5e', bad), /invalid mod file/);
