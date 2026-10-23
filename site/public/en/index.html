@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en" data-img="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lumen – a Minecraft launcher like an art book</title>
+  <meta name="description" content="Lumen is a Minecraft launcher for Windows: vanilla, Fabric and Quilt, modpacks and mods from Modrinth, five completely different layouts and controller support.">
+  <meta property="og:title" content="Lumen – a Minecraft launcher like an art book">
+  <meta property="og:description" content="Modpacks, mods and instances in an interface that feels like an art book, a console or a CRT monitor.">
+  <meta property="og:image" content="https://lumenlauncher.app/img/en/layout-book.jpg">
+  <meta property="og:url" content="https://lumenlauncher.app/en/">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="canonical" href="https://lumenlauncher.app/en/">
+  <link rel="alternate" hreflang="de" href="https://lumenlauncher.app/de/">
+  <link rel="alternate" hreflang="en" href="https://lumenlauncher.app/en/">
+  <link rel="alternate" hreflang="x-default" href="https://lumenlauncher.app/">
+  <link rel="icon" href="/icon.png">
+  <!-- fonts are self-hosted: no visitor IPs go to Google -->
+  <link rel="preload" href="/fonts/Archivo-400-900-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link href="/fonts/fonts.css" rel="stylesheet">
+  <link href="/site.css" rel="stylesheet">
+  <script src="/site.js" defer></script>
+</head>
+<body>
+  <header class="nav">
+    <div class="wrap">
+      <a class="brand" href="#top"><img src="/icon.png" alt="" width="28" height="28">Lumen</a>
+      <nav aria-label="Main navigation">
+        <a href="#features">Features</a><a href="#layouts">Layouts</a><a href="#farben">Colours</a><a href="#mods">Modpacks &amp; mods</a><a href="#start">Get started</a><a href="#faq">FAQ</a>
+      </nav>
+      <div class="lang" aria-label="Language">
+        <a href="/de/" hreflang="de" lang="de" data-lang="de" aria-current="false">DE</a><a href="/en/" hreflang="en" lang="en" data-lang="en" aria-current="true">EN</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="top">
+    <div class="hero">
+      <div class="wrap">
+        <div>
+          <div class="eyebrow">Minecraft launcher for Windows</div>
+          <h1>Minecraft, like an <em>art book.</em></h1>
+          <p class="lede">Lumen installs Minecraft, Fabric, Quilt, modpacks and mods – and shows your worlds not as a table but as a double-page spread, a console home screen, a bookshelf or a CRT monitor. With mouse, keyboard or controller.</p>
+          <div class="cta">
+            <a class="btn primary" href="#start"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>Get started</a>
+            <a class="btn" href="#layouts">See the layouts</a>
+          </div>
+          <div class="stats">
+            <div><b>5</b><span>layouts</span></div>
+            <div><b>5</b><span>colour schemes</span></div>
+            <div><b>18k+</b><span>modpacks on Modrinth</span></div>
+            <div><b>0</b><span>Java setup needed</span></div>
+          </div>
+        </div>
+        <div style="position:relative">
+          <div class="shot"><div class="bar"><i></i><i></i><i></i><span>Lumen · Library</span></div>
+            <img src="/img/en/layout-book.jpg" alt="Lumen in the Art Book layout: a modpack’s gallery image on the left, title, details and play button on the right" width="1440" height="900" fetchpriority="high"></div>
+          <div class="float f1"><span class="dot">A</span><div>Controller-ready<small>D-pad, A, B, Y</small></div></div>
+          <div class="float f2"><span class="dot">↻</span><div>3 mod updates<small>in one click</small></div></div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="rule">
+
+    <section id="features">
+      <div class="wrap">
+        <div class="head rv">
+          <div class="eyebrow">What Lumen does</div>
+          <h2>Everything a launcher needs. Nothing that gets in the way.</h2>
+          <p>Lumen takes care of versions, loaders, libraries, assets and Java. You just pick what you want to play.</p>
+        </div>
+        <div class="bento">
+          <article class="card c-4 big rv">
+            <div class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></div>
+            <h3>Instances for every version</h3>
+            <p>From the classic 1.8.9 to the latest release, plus snapshots and older versions if you want – vanilla, with Fabric or with Quilt. Every instance has its own worlds, mods and settings and never gets in another one’s way.</p>
+            <div class="chips"><span>Vanilla</span><span>Fabric</span><span>Quilt</span><span>Snapshots</span><span>Separate worlds</span></div>
+            <img src="/img/en/grid.jpg" alt="Grid view of the library with several instances" width="1440" height="900" loading="lazy">
+          </article>
+          <article class="card c-2 glow rv">
+            <div class="ico"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"/><path d="M9 8h6M9 12h6M9 16h3"/></svg></div>
+            <h3>Java sorts itself out</h3>
+            <p>Lumen knows which Java a Minecraft version needs – 8, 17, 21 or 25 – and uses an installed one or downloads it automatically. No hunting around, no error messages.</p>
+          </article>
+          <article class="card c-2 rv">
+            <div class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></svg></div>
+            <h3>Modpacks in one click</h3>
+            <p>Browse thousands of modpacks from Modrinth, pick a version, done. Lumen sets up the mods, config and loader.</p>
+          </article>
+          <article class="card c-2 rv">
+            <div class="ico"><svg viewBox="0 0 24 24"><path d="M9 4h6v3a2 2 0 1 0 4 0h1v6h-3a2 2 0 1 0 0 4h3v3H4v-6h3a2 2 0 1 0 0-4H4V4z"/></svg></div>
+            <h3>A mod browser per instance</h3>
+            <p>Search, install and remove mods that match the version and loader. Required dependencies like Fabric API come along automatically.</p>
+          </article>
+          <article class="card c-2 rv">
+            <div class="ico"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7L21 8M21 3v5h-5"/></svg></div>
+            <h3>Updates without the risk</h3>
+            <p>Lumen spots outdated mods and updates them one by one or all at once – always to the newest <em>stable</em> version, never to a beta.</p>
+          </article>
+          <article class="card c-3 rv">
+            <div class="ico"><svg viewBox="0 0 24 24"><path d="M6 11h4M8 9v4M15 12h.01M18 10h.01"/><path d="M17.3 5H6.7a4 4 0 0 0-4 3.6l-.6 6A3 3 0 0 0 5 18c1 0 1.5-.5 2-1l1.4-1.4c.4-.4.9-.6 1.4-.6h4.4c.5 0 1 .2 1.4.6L17 17c.5.5 1 1 2 1a3 3 0 0 0 3-3.4l-.6-6A4 4 0 0 0 17.3 5z"/></svg></div>
+            <h3>Built for the couch</h3>
+            <p>Browse with the d-pad, launch with A, go back with B, switch views with Y. Lumen works just as well with a controller as with mouse and keyboard – the on-screen hints adapt automatically.</p>
+          </article>
+          <article class="card c-3 rv">
+            <div class="ico"><svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div>
+            <h3>Offline or with Microsoft</h3>
+            <p>Play right away with an offline name – in singleplayer and on your own servers. Optionally sign in with your Microsoft account; the login is stored encrypted by Windows.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <hr class="rule">
+
+    <section id="layouts">
+      <div class="wrap">
+        <div class="head rv">
+          <div class="eyebrow">Five layouts</div>
+          <h2>Not five colours. Five UI languages.</h2>
+          <p>Inspired by frontends like ES-DE: every layout shows the same instances and modpacks in a completely different visual language. Switch any time in the settings – or press <kbd>G</kbd> to go back to the classic grid.</p>
+        </div>
+        <div class="show rv" data-show="layouts" data-kind="Layout" data-alt="Lumen in the layout">
+          <div class="tabs" role="tablist" aria-label="Layouts">
+            <button class="tab" role="tab" aria-selected="true" data-img="layout-book" data-text="One double-page spread per instance: the picture on the left as a plate with a caption, a big title on the right, key facts like a figure legend and the play button. The page colour comes from the icon."><span class="n">01</span><b>Art Book</b><small>One spread per entry</small></button>
+            <button class="tab" role="tab" aria-selected="false" data-img="layout-carousel" data-text="Like a console home screen: the artwork fills the whole background, a row of tiles runs along the bottom and the selected tile grows and glows. Made for controllers."><span class="n">02</span><b>Carousel</b><small>Console home screen</small></button>
+            <button class="tab" role="tab" aria-selected="false" data-img="layout-list" data-text="The classic frontend view: a big text list with icon and short info on the left, preview image, details and actions on the right. Ideal when you have lots of instances."><span class="n">03</span><b>List</b><small>Text list with preview</small></button>
+            <button class="tab" role="tab" aria-selected="false" data-img="layout-shelf" data-text="Every instance is a book spine with its own width, gold stamping and colour. The selected volume sticks out of the shelf, with the book, its cover and its details above."><span class="n">04</span><b>Shelf</b><small>Spines on a bookshelf</small></button>
+            <button class="tab" role="tab" aria-selected="false" data-img="layout-terminal" data-text="A CRT monitor with a text menu: dot leaders, inverted selection, the icon as ASCII art, scanlines, flicker and a blinking cursor. The glow colour follows the colour scheme."><span class="n">05</span><b>Terminal</b><small>CRT monitor &amp; ASCII</small></button>
+          </div>
+          <div class="stage">
+            <div class="shot"><div class="bar"><i></i><i></i><i></i><span data-label>Layout · Art Book</span></div>
+              <img src="/img/en/layout-book.jpg" alt="Lumen in the layout Art Book" width="1440" height="900" data-target></div>
+            <div class="caption"><p data-caption>One double-page spread per instance: the picture on the left as a plate with a caption, a big title on the right, key facts like a figure legend and the play button. The page colour comes from the icon.</p><span class="eyebrow muted">Library &amp; Discover</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="rule">
+
+    <section id="farben">
+      <div class="wrap">
+        <div class="head rv">
+          <div class="eyebrow">Five colour schemes</div>
+          <h2>And every layout in every colour.</h2>
+          <p>Colours are independent of the layout: a bright art book in a serif typeface, synthwave with a neon grid, a blocky game menu on dirt, or Swiss print in duotone. On top of that, every instance gets its own accent colour from its icon.</p>
+        </div>
+        <div class="rv" data-show="themes" data-kind="Colours" data-alt="Lumen in the colour scheme">
+          <div class="swatches" role="group" aria-label="Colours">
+            <button class="sw" aria-pressed="true" data-img="layout-book" data-name="Night"><i style="background:linear-gradient(135deg,#2b7a4b,#0c0e13)"></i>Night</button>
+            <button class="sw" aria-pressed="false" data-img="theme-papier" data-name="Paper"><i style="background:linear-gradient(135deg,#f3eee4 50%,#2f6f4f 50%)"></i>Paper</button>
+            <button class="sw" aria-pressed="false" data-img="theme-neon" data-name="Neon"><i style="background:linear-gradient(135deg,#ff2a6d,#7b2cff)"></i>Neon</button>
+            <button class="sw" aria-pressed="false" data-img="theme-pixel" data-name="Pixel"><i style="background:repeating-conic-gradient(#5b8c32 0 25%,#3d2c1e 0 50%) 0 0/10px 10px"></i>Pixel</button>
+            <button class="sw" aria-pressed="false" data-img="theme-poster" data-name="Poster"><i style="background:linear-gradient(135deg,#e63312 50%,#f4f1ea 50%)"></i>Poster</button>
+          </div>
+          <div class="shot"><div class="bar"><i></i><i></i><i></i><span data-label>Colours · Night</span></div>
+            <img src="/img/en/layout-book.jpg" alt="Lumen in the colour scheme Night" width="1440" height="900" loading="lazy" data-target></div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="rule">
+
+    <section id="mods">
+      <div class="wrap">
+        <div class="split rv">
+          <div>
+            <div class="eyebrow">Discover</div>
+            <div class="head" style="margin:0"><h2>Flip through modpacks instead of searching.</h2><p>The Discover page pulls modpacks live from Modrinth and shows them in your layout – with gallery image, author, downloads and supported versions. Keep flipping and more load automatically.</p></div>
+            <ul class="list">
+              <li><div><b>Search as you type</b><span>Results appear instantly, without leaving the page.</span></div></li>
+              <li><div><b>Pick a version, install</b><span>Lumen creates the instance, downloads every mod with checksum verification and applies the pack’s config.</span></div></li>
+              <li><div><b>Fabric &amp; Quilt</b><span>Forge and NeoForge packs are marked and can’t be installed yet.</span></div></li>
+            </ul>
+          </div>
+          <div class="shot"><div class="bar"><i></i><i></i><i></i><span>Discover · Carousel</span></div>
+            <img src="/img/en/discover-carousel.jpg" alt="Discover page in the Carousel layout with a full-screen modpack" width="1440" height="900" loading="lazy"></div>
+        </div>
+
+        <div class="split flip rv" style="margin-top:110px">
+          <div>
+            <div class="eyebrow">Mods</div>
+            <div class="head" style="margin:0"><h2>Manage mods, update in one click.</h2><p>Every Fabric and Quilt instance has its own mod browser. Lumen recognises installed mods by the file’s fingerprint – including the ones that came with a modpack.</p></div>
+            <ul class="list">
+              <li><div><b>Dependencies included</b><span>Install Iris and Sodium comes along.</span></div></li>
+              <li><div><b>See outdated mods</b><span>“old version → new version” right in the list, all of them updatable at once.</span></div></li>
+              <li><div><b>Stable versions only</b><span>Updates never jump to betas or alphas.</span></div></li>
+            </ul>
+          </div>
+          <div class="shot"><div class="bar"><i></i><i></i><i></i><span>Mods · Updates</span></div>
+            <img src="/img/en/mods-updates.jpg" alt="Mod dialog with three available updates for Iris, Lithium and Sodium" width="1440" height="900" loading="lazy"></div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="rule">
+
+    <section id="steuerung">
+      <div class="wrap">
+        <div class="head rv"><div class="eyebrow">Controls</div><h2>One set of controls for everything.</h2><p>Whatever the layout, the controls stay the same. Plug in a controller and Lumen shows the matching buttons automatically.</p></div>
+        <table class="controls rv">
+          <thead><tr><th>Action</th><th>Keyboard &amp; mouse</th><th>Controller</th></tr></thead>
+          <tbody>
+            <tr><td>Browse</td><td><kbd>←</kbd> <kbd>→</kbd> or mouse wheel</td><td>D-pad or left stick</td></tr>
+            <tr><td>Play / install</td><td><kbd>Enter</kbd> or click</td><td><kbd>A</kbd></td></tr>
+            <tr><td>Grid ↔ layout</td><td><kbd>G</kbd></td><td><kbd>Y</kbd></td></tr>
+            <tr><td>Close dialog</td><td><kbd>Esc</kbd></td><td><kbd>B</kbd></td></tr>
+            <tr><td>First / last entry</td><td><kbd>Home</kbd> <kbd>End</kbd></td><td>Hold to scroll through</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <hr class="rule">
+
+    <section id="start">
+      <div class="wrap">
+        <div class="head rv"><div class="eyebrow">Get started</div><h2>Three steps to playing.</h2></div>
+        <div class="steps">
+          <div class="step rv"><h3>Install</h3><p>Run the Lumen installer, pick a folder – done. Desktop and Start menu shortcuts included.</p></div>
+          <div class="step rv"><h3>Create an instance</h3><p>“New instance” for a version of your own, or install a modpack from “Discover”.</p></div>
+          <div class="step rv"><h3>Play</h3><p>On first launch Lumen downloads Minecraft and the right Java. After that everything starts instantly – offline too.</p></div>
+        </div>
+        <div class="note rv"><span aria-hidden="true">⚠</span><p><b>Windows warning on first launch?</b> The installer isn’t digitally signed (yet). When you see “Windows protected your PC”, click <b>More info → Run anyway</b>.</p></div>
+        <div class="reqs rv"><span><b>System:</b> Windows 10/11, 64-bit</span><span><b>Disk:</b> ~110 MB + game data</span><span><b>Data:</b> <code>%APPDATA%\.lumen</code></span></div>
+      </div>
+    </section>
+
+    <hr class="rule">
+
+    <section id="faq">
+      <div class="wrap">
+        <div class="head rv"><div class="eyebrow">FAQ</div><h2>Frequently asked questions</h2></div>
+        <div class="faq rv"><details><summary>Can I play on regular online servers?</summary><p>For that you need the Microsoft account sign-in that Lumen has built in. It works as soon as Microsoft approves the launcher’s Azure app for the Minecraft API – that’s in progress. Until then you play offline: in singleplayer and on servers with <code>online-mode=false</code>, such as your own server with friends.</p></details>
+          <details><summary>Do I need to own Minecraft?</summary><p>For the Microsoft sign-in and official servers, yes – Lumen checks that your account owns Minecraft: Java Edition. Please support the developers and buy the game if you play it regularly.</p></details>
+          <details><summary>Is the app available in English?</summary><p>Yes. Lumen speaks English and German and follows your system language by default; you can switch any time under Settings → Language.</p></details>
+          <details><summary>Are Forge and NeoForge supported?</summary><p>Not yet. Lumen supports vanilla, Fabric and Quilt. Modpacks that need Forge or NeoForge are marked on the Discover page.</p></details>
+          <details><summary>Do I have to install Java?</summary><p>No. Lumen looks for a suitable installed Java and otherwise downloads the right one (Eclipse Temurin) automatically – Java 8 for old Minecraft versions, 21 or 25 for new ones.</p></details>
+          <details><summary>Where are my worlds and mods?</summary><p>Everything lives in <code>%APPDATA%\.lumen</code>: each instance in its own folder under <code>instances</code>, with worlds, mods and settings. The folder icon on an instance opens it directly. Uninstalling Lumen keeps your data.</p></details>
+          <details><summary>Does Lumen run on Mac or Linux?</summary><p>Right now only on 64-bit Windows 10/11.</p></details>
+          <details><summary>Does Lumen cost anything?</summary><p>No. Lumen is a free hobby project with no ads and no tracking.</p></details></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap"><span>© 2026 Lumen · A hobby project</span><span>Not an official Minecraft product. Not approved by or associated with Mojang or Microsoft. Modpack data from Modrinth.</span></div>
+  </footer>
+
+</body>
+</html>

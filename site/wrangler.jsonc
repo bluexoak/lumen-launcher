@@ -1,0 +1,12 @@
+﻿{
+  // static site on lumenlauncher.app; the Worker picks the language for "/" and sends every other host (www, workers.dev) to the canonical domain
+  "name": "lumen-launcher",
+  "main": "src/worker.mjs",
+  "compatibility_date": "2026-09-01",
+  "workers_dev": true, // old address stays reachable and redirects to the domain
+  "routes": [
+    { "pattern": "lumenlauncher.app", "custom_domain": true },
+    { "pattern": "www.lumenlauncher.app", "custom_domain": true }
+  ],
+  "assets": { "directory": "./public", "binding": "ASSETS", "not_found_handling": "404-page", "run_worker_first": true }
+}

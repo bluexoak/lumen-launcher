@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="{{lang}}" data-img="{{img}}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{title}}</title>
+  <meta name="description" content="{{description}}">
+  <meta property="og:title" content="{{title}}">
+  <meta property="og:description" content="{{og_description}}">
+  <meta property="og:image" content="https://lumenlauncher.app/img/{{img}}/layout-book.jpg">
+  <meta property="og:url" content="https://lumenlauncher.app/{{lang}}/">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="canonical" href="https://lumenlauncher.app/{{lang}}/">
+  <link rel="alternate" hreflang="de" href="https://lumenlauncher.app/de/">
+  <link rel="alternate" hreflang="en" href="https://lumenlauncher.app/en/">
+  <link rel="alternate" hreflang="x-default" href="https://lumenlauncher.app/">
+  <link rel="icon" href="/icon.png">
+  <!-- fonts are self-hosted: no visitor IPs go to Google -->
+  <link rel="preload" href="/fonts/Archivo-400-900-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link href="/fonts/fonts.css" rel="stylesheet">
+  <link href="/site.css" rel="stylesheet">
+  <script src="/site.js" defer></script>
+</head>
+<body>
+  <header class="nav">
+    <div class="wrap">
+      <a class="brand" href="#top"><img src="/icon.png" alt="" width="28" height="28">Lumen</a>
+      <nav aria-label="{{nav_label}}">
+        <a href="#features">{{nav_features}}</a><a href="#layouts">{{nav_layouts}}</a><a href="#farben">{{nav_colors}}</a><a href="#mods">{{nav_mods}}</a><a href="#start">{{nav_start}}</a><a href="#faq">FAQ</a>
+      </nav>
+      <div class="lang" aria-label="{{lang_label}}">
+        <a href="/de/" hreflang="de" lang="de" data-lang="de" aria-current="{{is_de}}">DE</a><a href="/en/" hreflang="en" lang="en" data-lang="en" aria-current="{{is_en}}">EN</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="top">
+    <div class="hero">
+      <div class="wrap">
+        <div>
+          <div class="eyebrow">{{hero_eyebrow}}</div>
+          <h1>{{hero_title}}</h1>
+          <p class="lede">{{hero_lede}}</p>
+          <div class="cta">
+            <a class="btn primary" href="#start"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>{{hero_cta}}</a>
+            <a class="btn" href="#layouts">{{hero_cta2}}</a>
+          </div>
+          <div class="stats">
+            <div><b>5</b><span>{{stat_layouts}}</span></div>
+            <div><b>5</b><span>{{stat_colors}}</span></div>
+            <div><b>18k+</b><span>{{stat_packs}}</span></div>
+            <div><b>0</b><span>{{stat_java}}</span></div>
+          </div>
+        </div>
+        <div style="position:relative">
+          <div class="shot"><div class="bar"><i></i><i></i><i></i><span>{{hero_shot_label}}</span></div>
+            <img src="/img/{{img}}/layout-book.jpg" alt="{{hero_shot_alt}}" width="1440" height="900" fetchpriority="high"></div>
+          <div class="float f1"><span class="dot">A</span><div>{{float1}}<small>{{float1_sub}}</small></div></div>
+          <div class="float f2"><span class="dot">↻</span><div>{{float2}}<small>{{float2_sub}}</small></div></div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="rule">
+
+    <section id="features">
+      <div class="wrap">
+        <div class="head rv">
+          <div class="eyebrow">{{feat_eyebrow}}</div>
+          <h2>{{feat_title}}</h2>
+          <p>{{feat_lede}}</p>
+        </div>
+        <div class="bento">
+          <article class="card c-4 big rv">
+            <div class="ico"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></div>
+            <h3>{{f_inst_title}}</h3>
+            <p>{{f_inst_text}}</p>
+            <div class="chips">{{f_inst_chips}}</div>
+            <img src="/img/{{img}}/grid.jpg" alt="{{f_inst_alt}}" width="1440" height="900" loading="lazy">
+          </article>
+          <article class="card c-2 glow rv">
+            <div class="ico"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"/><path d="M9 8h6M9 12h6M9 16h3"/></svg></div>
+            <h3>{{f_java_title}}</h3>
+            <p>{{f_java_text}}</p>
+          </article>
+          <article class="card c-2 rv">
+            <div class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></svg></div>
+            <h3>{{f_packs_title}}</h3>
+            <p>{{f_packs_text}}</p>
+          </article>
+          <article class="card c-2 rv">
+            <div class="ico"><svg viewBox="0 0 24 24"><path d="M9 4h6v3a2 2 0 1 0 4 0h1v6h-3a2 2 0 1 0 0 4h3v3H4v-6h3a2 2 0 1 0 0-4H4V4z"/></svg></div>
+            <h3>{{f_mods_title}}</h3>
+            <p>{{f_mods_text}}</p>
+          </article>
+          <article class="card c-2 rv">
+            <div class="ico"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-3-6.7L21 8M21 3v5h-5"/></svg></div>
+            <h3>{{f_upd_title}}</h3>
+            <p>{{f_upd_text}}</p>
+          </article>
+          <article class="card c-3 rv">
+            <div class="ico"><svg viewBox="0 0 24 24"><path d="M6 11h4M8 9v4M15 12h.01M18 10h.01"/><path d="M17.3 5H6.7a4 4 0 0 0-4 3.6l-.6 6A3 3 0 0 0 5 18c1 0 1.5-.5 2-1l1.4-1.4c.4-.4.9-.6 1.4-.6h4.4c.5 0 1 .2 1.4.6L17 17c.5.5 1 1 2 1a3 3 0 0 0 3-3.4l-.6-6A4 4 0 0 0 17.3 5z"/></svg></div>
+            <h3>{{f_pad_title}}</h3>
+            <p>{{f_pad_text}}</p>
+          </article>
+          <article class="card c-3 rv">
+            <div class="ico"><svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div>
+            <h3>{{f_acc_title}}</h3>
+            <p>{{f_acc_text}}</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <hr class="rule">
+
+    <section id="layouts">
+      <div class="wrap">
+        <div class="head rv">
+          <div class="eyebrow">{{lay_eyebrow}}</div>
+          <h2>{{lay_title}}</h2>
+          <p>{{lay_lede}}</p>
+        </div>
+        <div class="show rv" data-show="layouts" data-kind="Layout" data-alt="{{lay_alt}}">
+          <div class="tabs" role="tablist" aria-label="Layouts">
+            <button class="tab" role="tab" aria-selected="true" data-img="layout-book" data-text="{{lay_book_text}}"><span class="n">01</span><b>Art Book</b><small>{{lay_book_sub}}</small></button>
+            <button class="tab" role="tab" aria-selected="false" data-img="layout-carousel" data-text="{{lay_car_text}}"><span class="n">02</span><b>{{lay_car}}</b><small>{{lay_car_sub}}</small></button>
+            <button class="tab" role="tab" aria-selected="false" data-img="layout-list" data-text="{{lay_list_text}}"><span class="n">03</span><b>{{lay_list}}</b><small>{{lay_list_sub}}</small></button>
+            <button class="tab" role="tab" aria-selected="false" data-img="layout-shelf" data-text="{{lay_shelf_text}}"><span class="n">04</span><b>{{lay_shelf}}</b><small>{{lay_shelf_sub}}</small></button>
+            <button class="tab" role="tab" aria-selected="false" data-img="layout-terminal" data-text="{{lay_term_text}}"><span class="n">05</span><b>Terminal</b><small>{{lay_term_sub}}</small></button>
+          </div>
+          <div class="stage">
+            <div class="shot"><div class="bar"><i></i><i></i><i></i><span data-label>Layout · Art Book</span></div>
+              <img src="/img/{{img}}/layout-book.jpg" alt="{{lay_alt}} Art Book" width="1440" height="900" data-target></div>
+            <div class="caption"><p data-caption>{{lay_book_text}}</p><span class="eyebrow muted">{{lay_where}}</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="rule">
+
+    <section id="farben">
+      <div class="wrap">
+        <div class="head rv">
+          <div class="eyebrow">{{col_eyebrow}}</div>
+          <h2>{{col_title}}</h2>
+          <p>{{col_lede}}</p>
+        </div>
+        <div class="rv" data-show="themes" data-kind="{{col_kind}}" data-alt="{{col_alt}}">
+          <div class="swatches" role="group" aria-label="{{col_kind}}">
+            <button class="sw" aria-pressed="true" data-img="layout-book" data-name="{{col_night}}"><i style="background:linear-gradient(135deg,#2b7a4b,#0c0e13)"></i>{{col_night}}</button>
+            <button class="sw" aria-pressed="false" data-img="theme-papier" data-name="{{col_paper}}"><i style="background:linear-gradient(135deg,#f3eee4 50%,#2f6f4f 50%)"></i>{{col_paper}}</button>
+            <button class="sw" aria-pressed="false" data-img="theme-neon" data-name="Neon"><i style="background:linear-gradient(135deg,#ff2a6d,#7b2cff)"></i>Neon</button>
+            <button class="sw" aria-pressed="false" data-img="theme-pixel" data-name="Pixel"><i style="background:repeating-conic-gradient(#5b8c32 0 25%,#3d2c1e 0 50%) 0 0/10px 10px"></i>Pixel</button>
+            <button class="sw" aria-pressed="false" data-img="theme-poster" data-name="Poster"><i style="background:linear-gradient(135deg,#e63312 50%,#f4f1ea 50%)"></i>Poster</button>
+          </div>
+          <div class="shot"><div class="bar"><i></i><i></i><i></i><span data-label>{{col_kind}} · {{col_night}}</span></div>
+            <img src="/img/{{img}}/layout-book.jpg" alt="{{col_alt}} {{col_night}}" width="1440" height="900" loading="lazy" data-target></div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="rule">
+
+    <section id="mods">
+      <div class="wrap">
+        <div class="split rv">
+          <div>
+            <div class="eyebrow">{{disc_eyebrow}}</div>
+            <div class="head" style="margin:0"><h2>{{disc_title}}</h2><p>{{disc_lede}}</p></div>
+            <ul class="list">
+              <li><div><b>{{disc_1}}</b><span>{{disc_1_sub}}</span></div></li>
+              <li><div><b>{{disc_2}}</b><span>{{disc_2_sub}}</span></div></li>
+              <li><div><b>{{disc_3}}</b><span>{{disc_3_sub}}</span></div></li>
+            </ul>
+          </div>
+          <div class="shot"><div class="bar"><i></i><i></i><i></i><span>{{disc_shot_label}}</span></div>
+            <img src="/img/{{img}}/discover-carousel.jpg" alt="{{disc_shot_alt}}" width="1440" height="900" loading="lazy"></div>
+        </div>
+
+        <div class="split flip rv" style="margin-top:110px">
+          <div>
+            <div class="eyebrow">Mods</div>
+            <div class="head" style="margin:0"><h2>{{mods_title}}</h2><p>{{mods_lede}}</p></div>
+            <ul class="list">
+              <li><div><b>{{mods_1}}</b><span>{{mods_1_sub}}</span></div></li>
+              <li><div><b>{{mods_2}}</b><span>{{mods_2_sub}}</span></div></li>
+              <li><div><b>{{mods_3}}</b><span>{{mods_3_sub}}</span></div></li>
+            </ul>
+          </div>
+          <div class="shot"><div class="bar"><i></i><i></i><i></i><span>{{mods_shot_label}}</span></div>
+            <img src="/img/{{img}}/mods-updates.jpg" alt="{{mods_shot_alt}}" width="1440" height="900" loading="lazy"></div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="rule">
+
+    <section id="steuerung">
+      <div class="wrap">
+        <div class="head rv"><div class="eyebrow">{{ctl_eyebrow}}</div><h2>{{ctl_title}}</h2><p>{{ctl_lede}}</p></div>
+        <table class="controls rv">
+          <thead><tr><th>{{ctl_action}}</th><th>{{ctl_kbd}}</th><th>Controller</th></tr></thead>
+          <tbody>
+            <tr><td>{{ctl_browse}}</td><td><kbd>←</kbd> <kbd>→</kbd> {{ctl_or_wheel}}</td><td>{{ctl_dpad}}</td></tr>
+            <tr><td>{{ctl_play}}</td><td><kbd>Enter</kbd> {{ctl_or_click}}</td><td><kbd>A</kbd></td></tr>
+            <tr><td>{{ctl_grid}}</td><td><kbd>G</kbd></td><td><kbd>Y</kbd></td></tr>
+            <tr><td>{{ctl_close}}</td><td><kbd>Esc</kbd></td><td><kbd>B</kbd></td></tr>
+            <tr><td>{{ctl_ends}}</td><td>{{ctl_ends_keys}}</td><td>{{ctl_hold}}</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <hr class="rule">
+
+    <section id="start">
+      <div class="wrap">
+        <div class="head rv"><div class="eyebrow">{{start_eyebrow}}</div><h2>{{start_title}}</h2></div>
+        <div class="steps">
+          <div class="step rv"><h3>{{step1}}</h3><p>{{step1_text}}</p></div>
+          <div class="step rv"><h3>{{step2}}</h3><p>{{step2_text}}</p></div>
+          <div class="step rv"><h3>{{step3}}</h3><p>{{step3_text}}</p></div>
+        </div>
+        <div class="note rv"><span aria-hidden="true">⚠</span><p>{{smartscreen}}</p></div>
+        <div class="reqs rv">{{reqs}}</div>
+      </div>
+    </section>
+
+    <hr class="rule">
+
+    <section id="faq">
+      <div class="wrap">
+        <div class="head rv"><div class="eyebrow">FAQ</div><h2>{{faq_title}}</h2></div>
+        <div class="faq rv">{{faq_items}}</div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap"><span>{{footer_left}}</span><span>{{footer_right}}</span></div>
+  </footer>
+
+</body>
+</html>

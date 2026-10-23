@@ -1,0 +1,191 @@
+// UI language for renderer (window.I18N) and main process (require). t('key', { var }) fills {var};
+// values may hold inline HTML only where the caller inserts them as HTML (data-i18n, counters).
+(function (root) {
+  const S = {
+    de: {
+      'nav.library': 'Bibliothek', 'nav.discover': 'Entdecken', 'nav.settings': 'Einstellungen',
+      'acc.offline': 'Offline-Konto', 'acc.msa': 'Microsoft-Konto',
+      'common.close': 'Schließen', 'common.cancel': 'Abbrechen', 'common.loading': 'Lädt…',
+
+      'lib.new': 'Neue Instanz', 'lib.count1': '{n} Instanz', 'lib.count': '{n} Instanzen',
+      'lib.empty': 'Noch keine Instanzen', 'lib.empty_text': 'Erstelle eine eigene oder installiere ein Modpack.', 'lib.empty_discover': 'Modpacks entdecken',
+      'inst.play': 'Spielen', 'inst.stop': 'Stoppen', 'inst.preparing': 'Wird vorbereitet…',
+      'inst.running': '● Läuft gerade', 'inst.running_short': 'Läuft gerade', 'inst.running_tag': 'Läuft', 'inst.continue': 'Weiterspielen', 'inst.new': 'Neu',
+      'inst.own': 'Eigene Instanz', 'inst.mods': 'Mods', 'inst.console': 'Konsole', 'inst.folder': 'Ordner öffnen', 'inst.delete': 'Löschen',
+      'inst.last_played': 'Zuletzt gespielt', 'inst.never': 'Noch nie', 'time.now': 'gerade eben',
+      'inst.stop_first': 'Erst das Spiel beenden.', 'inst.confirm_delete': '„{name}“ inklusive Welten und Mods löschen?',
+      'inst.exit_code': 'Spiel beendet mit Code {code} – Details in der Konsole.', 'inst.created': 'Instanz erstellt – beim ersten Start wird alles geladen.',
+      'console.empty': 'Noch keine Ausgabe. Starte die Instanz, um Logs zu sehen.',
+
+      'view.layout': 'Layout-Ansicht (G)', 'view.grid': 'Raster (G)',
+      'hint.browse': 'Blättern', 'hint.grid': 'Raster', 'hint.install': 'Installieren',
+      'lay.counter': '{unit} <b>{n}</b> von {total}', 'lay.unit_inst': 'Instanz', 'lay.unit_pack': 'Modpack', 'lay.none': 'Keine Treffer',
+ 'lay.no_image': '[ KEIN BILD ]', 'lay.open': 'open',
+
+      'disc.sub': 'Modpacks von Modrinth · Fabric &amp; Quilt', 'disc.search': 'Modpacks durchsuchen…', 'disc.search_short': 'Suchen…', 'disc.more': 'Mehr laden',
+      'disc.by': 'von {author}', 'disc.downloads': '{n} Downloads', 'disc.nothing': 'Nichts gefunden', 'disc.try_other': 'Versuch einen anderen Suchbegriff.',
+      'disc.no_match': 'Kein Modpack passt zu „{q}“. Versuch einen anderen Begriff.',
+      'pack.author': 'Autor', 'pack.followers': 'Follower', 'pack.updated': 'Aktualisiert', 'pack.install': 'Installieren', 'pack.forge': 'Forge – noch nicht unterstützt',
+      'pack.version': 'Version', 'pack.loading': 'Lade Versionen…', 'pack.unsupported': ' (nicht unterstützt)', 'pack.needs_forge': 'Dieses Modpack braucht Forge/NeoForge – das kann Lumen noch nicht.',
+      'pack.installing': 'Installiere…', 'pack.installed': '{title} installiert.',
+
+      'mods.installed': 'Installiert', 'mods.add': 'Hinzufügen', 'mods.filter': 'Installierte Mods filtern…', 'mods.search': 'Modrinth durchsuchen…',
+      'mods.updates1': '<b>{n}</b> Update verfügbar', 'mods.updates': '<b>{n}</b> Updates verfügbar', 'mods.update_all': 'Alle aktualisieren',
+      'mods.update': 'Aktualisieren', 'mods.remove': 'Entfernen', 'mods.install': 'Installieren', 'mods.is_installed': '✓ Installiert',
+      'mods.no_hits': 'Keine Treffer', 'mods.other_term': 'Anderer Suchbegriff?', 'mods.none': 'Keine Mods installiert',
+      'mods.none_text': 'Unter „Hinzufügen“ findest du Mods von Modrinth.', 'mods.none_found': 'Keine passenden Mods für diese Version.',
+      'mods.updated1': '{n} Mod aktualisiert.', 'mods.updated': '{n} Mods aktualisiert.', 'mods.confirm_remove': '„{file}“ entfernen?',
+      'mods.added': 'Installiert: {name}', 'mods.added_deps': 'Installiert: {name} + {n} Abhängigkeit(en)',
+
+      'new.title': 'Neue Instanz', 'new.name': 'Name', 'new.name_ph': 'Meine Welt', 'new.version': 'Minecraft-Version',
+      'new.snapshots': 'Snapshots &amp; alte Versionen anzeigen', 'new.loader': 'Mod-Loader', 'new.create': 'Erstellen',
+
+      'set.sub': 'Gilt für alle Instanzen',
+      'set.ms': 'Microsoft-Konto', 'set.ms_em': 'für Online-Server', 'set.ms_ph': 'Client-ID deiner Azure-App (xxxxxxxx-xxxx-…)', 'set.ms_login': 'Mit Microsoft anmelden',
+      'set.ms_signed': 'Angemeldet mit Microsoft', 'set.ms_logout': 'Abmelden',
+      'set.ms_hint': 'Braucht eine eigene Azure-App mit Freigabe für die Minecraft-API. Ohne Anmeldung spielst du offline mit dem Namen unten.',
+      'set.lang': 'Sprache', 'set.lang_em': 'Oberfläche von Lumen', 'lang.auto': 'Automatisch (Systemsprache)',
+      'set.layout': 'Layout', 'set.layout_em': 'Bibliothek &amp; Entdecken · G schaltet aufs Raster',
+      'layout.book_d': 'Eine Doppelseite pro Eintrag', 'layout.carousel': 'Karussell', 'layout.carousel_d': 'Konsolen-Homescreen mit Kachelreihe',
+      'layout.list': 'Liste', 'layout.list_d': 'Große Textliste, rechts die Vorschau', 'layout.shelf': 'Regal', 'layout.shelf_d': 'Buchrücken, der gewählte kommt heraus',
+      'layout.terminal_d': 'Röhrenmonitor, Textmenü, ASCII-Art',
+      'set.colors': 'Farben', 'set.colors_em': 'wird sofort übernommen',
+      'theme.nacht': 'Nacht', 'theme.nacht_d': 'Dunkel, ruhig, Farbe aus dem Icon', 'theme.papier': 'Papier', 'theme.papier_d': 'Heller Bildband mit Serifenschrift',
+      'theme.neon_d': 'Synthwave mit Gitter und Scanlines', 'theme.pixel_d': 'Blockiges Spielmenü auf Erde', 'theme.poster_d': 'Schweizer Druck, Duotone',
+      'set.user': 'Spielername', 'set.user_em': 'Offline-Modus',
+      'set.user_hint': 'Einzelspieler und Server mit <code>online-mode=false</code>. Wird nicht genutzt, solange du mit Microsoft angemeldet bist.',
+      'set.ram': 'Arbeitsspeicher', 'set.java': 'Java-Pfad', 'set.java_em': 'optional', 'set.java_ph': 'Automatisch (passende Version wird erkannt oder geladen)',
+      'set.save': 'Speichern', 'set.saved': 'Gespeichert.', 'set.open_root': 'Datenordner öffnen',
+
+      'ms.body': 'Öffne die Microsoft-Seite, gib diesen Code ein und melde dich mit dem Konto an, das Minecraft besitzt.',
+      'ms.wait': 'Warte auf Bestätigung…', 'ms.open': 'Code kopieren &amp; Seite öffnen', 'ms.copied': 'Code kopiert – füg ihn auf der Microsoft-Seite ein. Warte auf Bestätigung…',
+      'ms.signed_as': 'Angemeldet als {name}.',
+
+      // main process
+      'log.preparing': 'Bereite Minecraft {mc} ({loader}) vor…', 'log.starting': 'Starte mit {java}',
+      'err.checksum': 'Prüfsumme falsch: {url}', 'err.loader_mc': '{loader} unterstützt Minecraft {mc} nicht', 'err.unknown_mc': 'Unbekannte Minecraft-Version {mc}',
+      'err.java': 'Java {major} nicht gefunden', 'err.java_path': 'Der Java-Pfad muss auf eine vorhandene java.exe oder javaw.exe zeigen.',
+      'err.pack_host': 'Modpack lädt „{path}“ von einem nicht erlaubten Server – abgebrochen.', 'err.name': 'Name: 3–16 Zeichen, nur Buchstaben, Zahlen, _',
+      'err.client_id': 'Die Client-ID hat das Format xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx (Anwendungs-ID im Azure-Portal).',
+      'err.unsafe_path': 'Unsicherer Pfad im Modpack: {path}', 'err.forge': 'Forge/NeoForge-Modpacks werden noch nicht unterstützt',
+      'err.no_version': 'Keine Version für Minecraft {mc} mit {loader}',
+      'err.crypto': 'Windows-Verschlüsselung nicht verfügbar, Anmeldung wird nicht gespeichert.', 'err.need_client_id': 'Trage zuerst die Client-ID deiner Azure-App ein.',
+      'err.ms_missing': 'Microsoft-Anmeldung fehlt. Bitte in den Einstellungen neu anmelden.',
+      'auth.client_unknown': 'Client-ID nicht gefunden. Prüfe die Anwendungs-ID aus dem Azure-Portal.',
+      'auth.public_flows': 'In der Azure-App ist „Öffentliche Clientflows zulassen“ nicht aktiviert (Authentifizierung → Ja).',
+      'auth.account_type': 'Die Azure-App muss „Persönliche Microsoft-Konten“ als Kontotyp erlauben.',
+      'auth.expired': 'Der Code ist abgelaufen. Starte die Anmeldung neu.', 'auth.declined': 'Anmeldung wurde abgelehnt.',
+      'auth.relogin': 'Die Anmeldung ist abgelaufen. Bitte neu mit Microsoft anmelden.', 'auth.failed': 'Microsoft-Anmeldung fehlgeschlagen: {detail}', 'auth.unknown': 'unbekannter Fehler',
+      'auth.cancelled': 'Anmeldung abgebrochen.',
+      'auth.no_xbox': 'Dieses Microsoft-Konto hat noch kein Xbox-Profil. Melde dich einmal auf xbox.com an und versuch es erneut.',
+      'auth.country': 'Xbox Live ist in deinem Land nicht verfügbar.', 'auth.age': 'Das Konto braucht eine Altersverifizierung bei Xbox.',
+      'auth.child': 'Kinderkonto: Ein Erwachsener muss das Konto erst zu einer Microsoft-Familie hinzufügen.',
+      'auth.xbl': 'Xbox-Live-Anmeldung fehlgeschlagen ({status}).', 'auth.xsts': 'Xbox-Freigabe (XSTS) fehlgeschlagen ({status}).',
+      'auth.not_approved': 'Deine Azure-App ist noch nicht für die Minecraft-API freigeschaltet. Den Antrag stellst du unter aka.ms/mce-reviewappid.',
+      'auth.mc': 'Minecraft-Anmeldung fehlgeschlagen ({status}).',
+      'auth.no_game': 'Dieses Microsoft-Konto besitzt kein Minecraft: Java Edition (oder hat noch keinen Spielernamen gewählt).',
+      'auth.profile': 'Minecraft-Profil konnte nicht geladen werden ({status}).',
+    },
+    en: {
+      'nav.library': 'Library', 'nav.discover': 'Discover', 'nav.settings': 'Settings',
+      'acc.offline': 'Offline account', 'acc.msa': 'Microsoft account',
+      'common.close': 'Close', 'common.cancel': 'Cancel', 'common.loading': 'Loading…',
+
+      'lib.new': 'New instance', 'lib.count1': '{n} instance', 'lib.count': '{n} instances',
+      'lib.empty': 'No instances yet', 'lib.empty_text': 'Create your own or install a modpack.', 'lib.empty_discover': 'Discover modpacks',
+      'inst.play': 'Play', 'inst.stop': 'Stop', 'inst.preparing': 'Preparing…',
+      'inst.running': '● Running', 'inst.running_short': 'Running now', 'inst.running_tag': 'Running', 'inst.continue': 'Continue playing', 'inst.new': 'New',
+      'inst.own': 'Custom instance', 'inst.mods': 'Mods', 'inst.console': 'Console', 'inst.folder': 'Open folder', 'inst.delete': 'Delete',
+      'inst.last_played': 'Last played', 'inst.never': 'Never', 'time.now': 'just now',
+      'inst.stop_first': 'Stop the game first.', 'inst.confirm_delete': 'Delete “{name}” including its worlds and mods?',
+      'inst.exit_code': 'Game exited with code {code} – details in the console.', 'inst.created': 'Instance created – everything downloads on first launch.',
+      'console.empty': 'No output yet. Launch the instance to see its logs.',
+
+      'view.layout': 'Layout view (G)', 'view.grid': 'Grid (G)',
+      'hint.browse': 'Browse', 'hint.grid': 'Grid', 'hint.install': 'Install',
+      'lay.counter': '{unit} <b>{n}</b> of {total}', 'lay.unit_inst': 'Instance', 'lay.unit_pack': 'Modpack', 'lay.none': 'No results',
+ 'lay.no_image': '[ NO IMAGE ]', 'lay.open': 'open',
+
+      'disc.sub': 'Modpacks from Modrinth · Fabric &amp; Quilt', 'disc.search': 'Search modpacks…', 'disc.search_short': 'Search…', 'disc.more': 'Load more',
+      'disc.by': 'by {author}', 'disc.downloads': '{n} downloads', 'disc.nothing': 'Nothing found', 'disc.try_other': 'Try a different search term.',
+      'disc.no_match': 'No modpack matches “{q}”. Try a different term.',
+      'pack.author': 'Author', 'pack.followers': 'Followers', 'pack.updated': 'Updated', 'pack.install': 'Install', 'pack.forge': 'Forge – not supported yet',
+      'pack.version': 'Version', 'pack.loading': 'Loading versions…', 'pack.unsupported': ' (not supported)', 'pack.needs_forge': 'This modpack needs Forge/NeoForge – Lumen can’t do that yet.',
+      'pack.installing': 'Installing…', 'pack.installed': '{title} installed.',
+
+      'mods.installed': 'Installed', 'mods.add': 'Add', 'mods.filter': 'Filter installed mods…', 'mods.search': 'Search Modrinth…',
+      'mods.updates1': '<b>{n}</b> update available', 'mods.updates': '<b>{n}</b> updates available', 'mods.update_all': 'Update all',
+      'mods.update': 'Update', 'mods.remove': 'Remove', 'mods.install': 'Install', 'mods.is_installed': '✓ Installed',
+      'mods.no_hits': 'No results', 'mods.other_term': 'Try another term?', 'mods.none': 'No mods installed',
+      'mods.none_text': 'You’ll find mods from Modrinth under “Add”.', 'mods.none_found': 'No matching mods for this version.',
+      'mods.updated1': '{n} mod updated.', 'mods.updated': '{n} mods updated.', 'mods.confirm_remove': 'Remove “{file}”?',
+      'mods.added': 'Installed: {name}', 'mods.added_deps': 'Installed: {name} + {n} required mod(s)',
+
+      'new.title': 'New instance', 'new.name': 'Name', 'new.name_ph': 'My world', 'new.version': 'Minecraft version',
+      'new.snapshots': 'Show snapshots &amp; old versions', 'new.loader': 'Mod loader', 'new.create': 'Create',
+
+      'set.sub': 'Applies to all instances',
+      'set.ms': 'Microsoft account', 'set.ms_em': 'for online servers', 'set.ms_ph': 'Client ID of your Azure app (xxxxxxxx-xxxx-…)', 'set.ms_login': 'Sign in with Microsoft',
+      'set.ms_signed': 'Signed in with Microsoft', 'set.ms_logout': 'Sign out',
+      'set.ms_hint': 'Needs your own Azure app approved for the Minecraft API. Without signing in you play offline with the name below.',
+      'set.lang': 'Language', 'set.lang_em': 'Lumen’s interface', 'lang.auto': 'Automatic (system language)',
+      'set.layout': 'Layout', 'set.layout_em': 'Library &amp; Discover · G switches to the grid',
+      'layout.book_d': 'One spread per entry', 'layout.carousel': 'Carousel', 'layout.carousel_d': 'Console home screen with a row of tiles',
+      'layout.list': 'List', 'layout.list_d': 'Big text list, preview on the right', 'layout.shelf': 'Shelf', 'layout.shelf_d': 'Book spines, the selected one comes out',
+      'layout.terminal_d': 'CRT monitor, text menu, ASCII art',
+      'set.colors': 'Colours', 'set.colors_em': 'applied instantly',
+      'theme.nacht': 'Night', 'theme.nacht_d': 'Dark, calm, colour from the icon', 'theme.papier': 'Paper', 'theme.papier_d': 'Bright art book with a serif typeface',
+      'theme.neon_d': 'Synthwave with grid and scanlines', 'theme.pixel_d': 'Blocky game menu on dirt', 'theme.poster_d': 'Swiss print, duotone',
+      'set.user': 'Player name', 'set.user_em': 'offline mode',
+      'set.user_hint': 'Singleplayer and servers with <code>online-mode=false</code>. Not used while you’re signed in with Microsoft.',
+      'set.ram': 'Memory', 'set.java': 'Java path', 'set.java_em': 'optional', 'set.java_ph': 'Automatic (the right version is detected or downloaded)',
+      'set.save': 'Save', 'set.saved': 'Saved.', 'set.open_root': 'Open data folder',
+
+      'ms.body': 'Open the Microsoft page, enter this code and sign in with the account that owns Minecraft.',
+      'ms.wait': 'Waiting for confirmation…', 'ms.open': 'Copy code &amp; open page', 'ms.copied': 'Code copied – paste it on the Microsoft page. Waiting for confirmation…',
+      'ms.signed_as': 'Signed in as {name}.',
+
+      'log.preparing': 'Preparing Minecraft {mc} ({loader})…', 'log.starting': 'Launching with {java}',
+      'err.checksum': 'Checksum mismatch: {url}', 'err.loader_mc': '{loader} doesn’t support Minecraft {mc}', 'err.unknown_mc': 'Unknown Minecraft version {mc}',
+      'err.java': 'Java {major} not found', 'err.java_path': 'The Java path must point to an existing java.exe or javaw.exe.',
+      'err.pack_host': 'The modpack downloads “{path}” from a server that isn’t allowed – aborted.', 'err.name': 'Name: 3–16 characters, letters, digits and _ only',
+      'err.client_id': 'The client ID looks like xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx (Application ID in the Azure portal).',
+      'err.unsafe_path': 'Unsafe path in modpack: {path}', 'err.forge': 'Forge/NeoForge modpacks aren’t supported yet',
+      'err.no_version': 'No version for Minecraft {mc} with {loader}',
+      'err.crypto': 'Windows encryption isn’t available, so the sign-in can’t be saved.', 'err.need_client_id': 'Enter your Azure app’s client ID first.',
+      'err.ms_missing': 'Microsoft sign-in missing. Please sign in again in the settings.',
+      'auth.client_unknown': 'Client ID not found. Check the Application ID in the Azure portal.',
+      'auth.public_flows': '“Allow public client flows” is not enabled in the Azure app (Authentication → Yes).',
+      'auth.account_type': 'The Azure app must allow “Personal Microsoft accounts” as account type.',
+      'auth.expired': 'The code has expired. Start the sign-in again.', 'auth.declined': 'Sign-in was declined.',
+      'auth.relogin': 'The sign-in has expired. Please sign in with Microsoft again.', 'auth.failed': 'Microsoft sign-in failed: {detail}', 'auth.unknown': 'unknown error',
+      'auth.cancelled': 'Sign-in cancelled.',
+      'auth.no_xbox': 'This Microsoft account has no Xbox profile yet. Sign in once at xbox.com and try again.',
+      'auth.country': 'Xbox Live isn’t available in your country.', 'auth.age': 'The account needs age verification with Xbox.',
+      'auth.child': 'Child account: an adult has to add it to a Microsoft family first.',
+      'auth.xbl': 'Xbox Live sign-in failed ({status}).', 'auth.xsts': 'Xbox authorisation (XSTS) failed ({status}).',
+      'auth.not_approved': 'Your Azure app isn’t approved for the Minecraft API yet. You can apply at aka.ms/mce-reviewappid.',
+      'auth.mc': 'Minecraft sign-in failed ({status}).',
+      'auth.no_game': 'This Microsoft account doesn’t own Minecraft: Java Edition (or hasn’t picked a player name yet).',
+      'auth.profile': 'Couldn’t load the Minecraft profile ({status}).',
+    },
+  };
+
+  let lang = 'de';
+  const api = {
+    get lang() { return lang; },
+    setLang(l) { lang = S[l] ? l : 'en'; },
+    // setting 'de' | 'en' wins; 'auto' (or nothing) follows the system locale, English unless it is German
+    resolve: (setting, systemLocale) => (S[setting] ? setting : /^de\b/i.test(systemLocale || '') ? 'de' : 'en'),
+    t: (key, vars = {}) => (S[lang][key] ?? S.de[key] ?? key).replace(/\{(\w+)\}/g, (_, k) => vars[k] ?? ''),
+    strings: S,
+  };
+  if (typeof module !== 'undefined') module.exports = api; else root.I18N = api;
+})(this);
+
+if (typeof require !== 'undefined' && require.main === module) { // node i18n.js → both languages have the same keys
+  const { strings: S } = module.exports, de = Object.keys(S.de), en = Object.keys(S.en);
+  const missing = de.filter(k => !en.includes(k)).concat(en.filter(k => !de.includes(k)));
+  if (missing.length) { console.error('key mismatch:', missing); process.exit(1); }
+  console.log('ok', de.length);
+}

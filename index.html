@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' https: data:; style-src 'self' 'unsafe-inline'">
+  <title>Lumen</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- texts come from i18n.js: data-i18n sets the content, data-i18n-ph / data-i18n-title the attribute -->
+  <div class="titlebar"></div>
+
+  <aside class="side">
+    <div class="brand"><span class="logo"></span><span>Lumen</span></div>
+    <nav>
+      <button data-view="library" class="active"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span data-i18n="nav.library"></span></button>
+      <button data-view="discover"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></svg><span data-i18n="nav.discover"></span></button>
+      <button data-view="settings"><svg viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg><span data-i18n="nav.settings"></span></button>
+    </nav>
+    <div class="account">
+      <span class="avatar" id="avatar"></span>
+      <div><b id="acc-name">Player</b><small id="acc-kind" data-i18n="acc.offline"></small></div>
+    </div>
+  </aside>
+
+  <main>
+    <section id="library" class="view active">
+      <header>
+        <div><h1 data-i18n="nav.library"></h1><p class="sub" id="lib-sub"></p></div>
+        <div class="row"><span class="vt-slot"></span><button class="btn primary" id="new-btn"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><span data-i18n="lib.new"></span></button></div>
+      </header>
+      <div id="book" class="layout-host"></div>
+      <div id="hero"></div>
+      <div class="grid" id="instances"></div>
+    </section>
+
+    <section id="discover" class="view">
+      <header>
+        <div><h1 data-i18n="nav.discover"></h1><p class="sub" data-i18n="disc.sub"></p></div>
+        <div class="row"><label class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="search" type="search" data-i18n-ph="disc.search"></label><span class="vt-slot"></span></div>
+      </header>
+      <div id="pack-book" class="layout-host"></div>
+      <div class="grid packs" id="packs"></div>
+      <button class="btn ghost more" id="more" hidden data-i18n="disc.more"></button>
+    </section>
+
+    <section id="settings" class="view">
+      <header><div><h1 data-i18n="nav.settings"></h1><p class="sub" data-i18n="set.sub"></p></div></header>
+      <form class="panel" id="settings-form">
+        <label class="field"><span><span data-i18n="set.lang"></span> <em data-i18n="set.lang_em"></em></span>
+          <select name="language"><option value="auto" data-i18n="lang.auto"></option><option value="de">Deutsch</option><option value="en">English</option></select></label>
+        <div class="field"><span><span data-i18n="set.ms"></span> <em data-i18n="set.ms_em"></em></span>
+          <div class="ms-box" id="ms-out">
+            <input name="clientId" data-i18n-ph="set.ms_ph" spellcheck="false" autocomplete="off">
+            <button type="button" class="btn primary" id="ms-login" data-i18n="set.ms_login"></button>
+          </div>
+          <div class="ms-box signed" id="ms-in" hidden>
+            <span class="avatar" id="ms-avatar"></span><div><b id="ms-name"></b><small data-i18n="set.ms_signed"></small></div>
+            <button type="button" class="btn ghost" id="ms-logout" data-i18n="set.ms_logout"></button>
+          </div>
+          <small data-i18n="set.ms_hint"></small>
+        </div>
+        <div class="field"><span><span data-i18n="set.layout"></span> <em data-i18n="set.layout_em"></em></span>
+          <div class="themes">
+            <label class="theme-card"><input type="radio" name="layout" value="book"><span class="mini"><i></i><span></span></span><b>Art Book</b><small data-i18n="layout.book_d"></small></label>
+            <label class="theme-card"><input type="radio" name="layout" value="carousel"><span class="lm lm-car"></span><b data-i18n="layout.carousel"></b><small data-i18n="layout.carousel_d"></small></label>
+            <label class="theme-card"><input type="radio" name="layout" value="list"><span class="lm lm-list"></span><b data-i18n="layout.list"></b><small data-i18n="layout.list_d"></small></label>
+            <label class="theme-card"><input type="radio" name="layout" value="shelf"><span class="lm lm-shelf"></span><b data-i18n="layout.shelf"></b><small data-i18n="layout.shelf_d"></small></label>
+            <label class="theme-card"><input type="radio" name="layout" value="terminal"><span class="lm lm-term"></span><b>Terminal</b><small data-i18n="layout.terminal_d"></small></label>
+          </div>
+        </div>
+        <div class="field"><span><span data-i18n="set.colors"></span> <em data-i18n="set.colors_em"></em></span>
+          <div class="themes">
+            <label class="theme-card" data-t="nacht"><input type="radio" name="theme" value="nacht"><span class="mini"><i></i><span></span></span><b data-i18n="theme.nacht"></b><small data-i18n="theme.nacht_d"></small></label>
+            <label class="theme-card" data-t="papier"><input type="radio" name="theme" value="papier"><span class="mini"><i></i><span></span></span><b data-i18n="theme.papier"></b><small data-i18n="theme.papier_d"></small></label>
+            <label class="theme-card" data-t="neon"><input type="radio" name="theme" value="neon"><span class="mini"><i></i><span></span></span><b>Neon</b><small data-i18n="theme.neon_d"></small></label>
+            <label class="theme-card" data-t="pixel"><input type="radio" name="theme" value="pixel"><span class="mini"><i></i><span></span></span><b>Pixel</b><small data-i18n="theme.pixel_d"></small></label>
+            <label class="theme-card" data-t="poster"><input type="radio" name="theme" value="poster"><span class="mini"><i></i><span></span></span><b>Poster</b><small data-i18n="theme.poster_d"></small></label>
+          </div>
+        </div>
+        <label class="field"><span><span data-i18n="set.user"></span> <em data-i18n="set.user_em"></em></span><input name="username" required pattern="\w{3,16}" maxlength="16" spellcheck="false">
+          <small data-i18n="set.user_hint"></small></label>
+        <label class="field"><span><span data-i18n="set.ram"></span> <b id="ram-val"></b></span><input name="ram" type="range" min="1024" max="16384" step="512"></label>
+        <label class="field"><span><span data-i18n="set.java"></span> <em data-i18n="set.java_em"></em></span><input name="javaPath" data-i18n-ph="set.java_ph" spellcheck="false"></label>
+        <div class="row"><button class="btn primary" data-i18n="set.save"></button><button type="button" class="btn ghost" id="open-root" data-i18n="set.open_root"></button></div>
+      </form>
+    </section>
+  </main>
+
+  <div class="console" id="console">
+    <div class="console-head"><span class="dot"></span><b id="console-title"></b><button class="icon" id="console-close" data-i18n-title="common.close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+    <pre id="console-log"></pre>
+  </div>
+
+  <dialog id="new-dlg">
+    <form method="dialog" id="new-form">
+      <h2 data-i18n="new.title"></h2>
+      <label class="field"><span data-i18n="new.name"></span><input name="name" data-i18n-ph="new.name_ph" maxlength="40"></label>
+      <label class="field"><span data-i18n="new.version"></span><select name="mc" id="mc-select"></select></label>
+      <label class="check"><input type="checkbox" id="snapshots"> <span data-i18n="new.snapshots"></span></label>
+      <div class="field"><span data-i18n="new.loader"></span>
+        <div class="seg">
+          <label><input type="radio" name="loader" value="vanilla" checked><span>Vanilla</span></label>
+          <label><input type="radio" name="loader" value="fabric"><span>Fabric</span></label>
+          <label><input type="radio" name="loader" value="quilt"><span>Quilt</span></label>
+        </div>
+      </div>
+      <div class="row end"><button class="btn ghost" value="cancel" formnovalidate data-i18n="common.cancel"></button><button class="btn primary" value="ok" data-i18n="new.create"></button></div>
+    </form>
+  </dialog>
+
+  <dialog id="pack-dlg"></dialog>
+
+  <dialog id="ms-dlg">
+    <div class="dlg">
+      <h2 data-i18n="set.ms_login"></h2>
+      <p class="dlg-body" data-i18n="ms.body"></p>
+      <div class="ms-code" id="ms-code">········</div>
+      <p class="ms-status" id="ms-status" data-i18n="ms.wait"></p>
+      <div class="row end"><button class="btn ghost" id="ms-cancel" data-i18n="common.cancel"></button><button class="btn primary" id="ms-open" data-i18n="ms.open"></button></div>
+    </div>
+  </dialog>
+
+  <dialog id="mods-dlg">
+    <div class="mods">
+      <div class="mods-head">
+        <div><h2 id="mods-title"></h2><p class="sub" id="mods-sub"></p></div>
+        <div class="seg tabs">
+          <label><input type="radio" name="mtab" value="installed" checked><span><span data-i18n="mods.installed"></span> <b id="mods-count"></b></span></label>
+          <label><input type="radio" name="mtab" value="add"><span data-i18n="mods.add"></span></label>
+        </div>
+        <button class="icon" id="mods-close" data-i18n-title="common.close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+      </div>
+      <label class="search wide"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="mods-search" type="search"></label>
+      <div class="mod-list" id="mod-list"></div>
+    </div>
+  </dialog>
+  <div id="toasts"></div>
+  <!-- layouts.js only defines functions, so it loads first: app.js may render as soon as settings arrive -->
+  <script src="i18n.js"></script>
+  <script src="layouts.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

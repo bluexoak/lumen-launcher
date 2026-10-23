@@ -1,0 +1,61 @@
+{
+  "name": "lumen-launcher",
+  "version": "0.1.0",
+  "description": "Minecraft-Launcher mit Modrinth-Modpacks",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "node launcher.js",
+    "dist": "electron-builder --win nsis zip"
+  },
+  "keywords": [],
+  "author": "Lumen",
+  "license": "GPL-3.0-or-later",
+  "type": "commonjs",
+  "devDependencies": {
+    "electron": "^45.0.0",
+    "electron-builder": "^26.15.3"
+  },
+  "productName": "Lumen",
+  "build": {
+    "appId": "app.lumen.launcher",
+    "productName": "Lumen",
+    "files": [
+      "main.js",
+      "preload.js",
+      "launcher.js",
+      "auth.js",
+      "i18n.js",
+      "app.js",
+      "layouts.js",
+      "index.html",
+      "style.css",
+      "package.json"
+    ],
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "win": {
+      "icon": "build/icon.png",
+      "artifactName": "Lumen-${version}-win-x64.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Lumen",
+      "artifactName": "Lumen-Setup-${version}.${ext}",
+      "license": "LICENSE"
+    }
+  },
+  "homepage": "https://lumenlauncher.app",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bluexoak/lumen-launcher.git"
+  },
+  "bugs": {
+    "url": "https://github.com/bluexoak/lumen-launcher/issues"
+  }
+}
