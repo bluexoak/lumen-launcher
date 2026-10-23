@@ -103,10 +103,10 @@ const LAYOUTS = {
     <div class="hints"></div>`; },
 
   // CRT text menu
-  terminal: ({ items, n, label }) => { const m = items[n]; return `
+  terminal: ({ items, n, label, ...ctx }) => { const m = items[n]; return `
     <div class="crt">
       <div class="slot-top"></div>
-      <div class="term-head"><span>LUMEN 0.1 · ${esc(label.toUpperCase())}</span><span>RAM ${state.settings.ram || 4096}M · ${new Date().toLocaleDateString(I18N.lang)}</span></div>
+      <div class="term-head"><span>LUMEN 0.1 · ${esc(label.toUpperCase())}</span><span>RAM ${ctx.ram}M · ${new Date().toLocaleDateString(I18N.lang)}</span></div>
       <div class="term-main">
         <div class="term-list">${items.map((x, k) => `<button class="tl ${x === m ? 'on' : ''}" data-sel="${esc(x.id)}"><span class="tn">${pad2(k + 1)} ${esc(x.title.toUpperCase())}</span><span class="tm">${esc(x.short.toUpperCase())}</span></button>`).join('')}</div>
         <div class="term-detail">

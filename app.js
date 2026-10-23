@@ -22,6 +22,7 @@ const ICON = {
   trash: '<svg viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></svg>',
   mods: '<svg viewBox="0 0 24 24"><path d="M9 4h6v3a2 2 0 1 0 4 0h1v6h-3a2 2 0 1 0 0 4h3v3H4v-6h3a2 2 0 1 0 0-4H4V4z"/></svg>',
   dl: '<svg viewBox="0 0 24 24"><path d="M12 4v11m-5-5 5 5 5-5M5 20h14"/></svg>',
+  gear: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>',
 };
 const state = { instances: [], running: new Set(), busy: new Set(), logs: new Map(), consoleFor: null, settings: {} };
 
@@ -71,6 +72,35 @@ $$('#settings-form input[name=layout]').forEach(r => (r.onchange = async () => {
 }));
 
 const THEMES = ['nacht', 'papier', 'neon', 'pixel', 'poster'];
+// shelf: the cover turns to face the mouse; resting angle comes back when it leaves the window
+let tiltFrame = 0;
+addEventListener('mousemove', e => {
+  if (tiltFrame || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  tiltFrame = requestAnimationFrame(() => {
+    tiltFrame = 0;
+    const b = document.querySelector('.view.active .lay-shelf .book3d');
+    if (!b) return;
+    const r = b.getBoundingClientRect(), clamp = v => Math.max(-1, Math.min(1, v));
+    const dx = clamp((e.clientX - r.left - r.width / 2) / innerWidth * 2), dy = clamp((e.clientY - r.top - r.height / 2) / innerHeight * 2);
+    b.style.setProperty('--ry', (dx * 28).toFixed(1) + 'deg');
+    b.style.setProperty('--rx', (-dy * 16).toFixed(1) + 'deg');
+  });
+});
+document.addEventListener('mouseleave', () => document.querySelectorAll('.book3d').forEach(b => b.style.cssText = ''));
+
+// window buttons (drawn by Windows) take the colour of whatever the page shows under them
+// ponytail: polls every 400ms instead of hooking every render path; cheap, one elementFromPoint
+let barColor = '';
+setInterval(() => {
+  let el = document.elementFromPoint(innerWidth - 70, 20), bg = '';
+  for (; el && !bg; el = el.parentElement) { const c = getComputedStyle(el).backgroundColor; if (!/^rgba\(.*, 0\)$|transparent/.test(c)) bg = c; }
+  const [r, g, b] = (bg || 'rgb(12, 14, 19)').match(/\d+/g).map(Number);
+  const hex = '#' + [r, g, b].map(v => v.toString(16).padStart(2, '0')).join('');
+  if (hex === barColor) return;
+  barColor = hex;
+  api.invoke('titlebar', hex, 0.2126 * r + 0.7152 * g + 0.0722 * b > 140 ? '#3a3a3a' : '#b8bfcc').catch(() => {});
+}, 400);
+
 function applyTheme(t) {
   t = THEMES.includes(t) ? t : 'nacht';
   document.documentElement.dataset.theme = t;
@@ -127,7 +157,7 @@ const styleVars = i => Object.entries(colorVars(i)).map(([k, v]) => `${k}:${v}`)
 function instModel(i) {
   const [big, ...rest] = i.mc.split(/(?=\.\d+$)/);
   return {
-    id: i.id, title: i.name, color: i, icon: i.icon, banner: i.banner,
+    id: i.id, title: i.name, color: i, icon: i.icon, banner: i.coverUrl || i.banner,
     plate: { big, small: rest.join(''), vert: `Minecraft · ${LOADER[i.loader]}` },
     kicker: state.running.has(i.id) ? t('inst.running') : LOADER[i.loader] + (i.modpack ? ' · Modpack' : ' · ' + t('inst.own')),
     lede: null,
@@ -139,13 +169,14 @@ function instModel(i) {
       ${i.loader !== 'vanilla' ? `<button class="icon" data-act="mods" title="${t('inst.mods')}">${ICON.mods}</button>` : ''}
       <button class="icon" data-act="logs" title="${t('inst.console')}">${ICON.term}</button>
       <button class="icon" data-act="folder" title="${t('inst.folder')}">${ICON.folder}</button>
+      <button class="icon" data-act="settings" title="${t('inst.settings')}">${ICON.gear}</button>
       <button class="icon danger" data-act="delete" title="${t('inst.delete')}">${ICON.trash}</button>`,
   };
 }
 function libCtx() {
   const list = state.instances, n = Math.max(0, list.findIndex(i => i.id === state.sel));
   state.sel = list[n]?.id;
-  return { items: list.map(instModel), n, total: list.length, unit: t('lay.unit_inst'), hint: t('inst.play'), label: t('nav.library'), busy: state.busy.has(state.sel),
+  return { items: list.map(instModel), n, total: list.length, ram: list[n]?.ram || state.settings.ram || 4096, unit: t('lay.unit_inst'), hint: t('inst.play'), label: t('nav.library'), busy: state.busy.has(state.sel),
     controls: `${viewToggle()}<button class="btn ghost sm" data-act="new">+ ${t('lib.new')}</button>` };
 }
 
@@ -264,7 +295,8 @@ function renderInstances(turnDir) {
         ${i.loader !== 'vanilla' ? `<button class="icon" data-act="mods" title="${t('inst.mods')}">${ICON.mods}</button>` : ''}
         <button class="icon" data-act="logs" title="${t('inst.console')}">${ICON.term}</button>
         <button class="icon" data-act="folder" title="${t('inst.folder')}">${ICON.folder}</button>
-        <button class="icon danger" data-act="delete" title="${t('inst.delete')}">${ICON.trash}</button>
+        <button class="icon" data-act="settings" title="${t('inst.settings')}">${ICON.gear}</button>
+      <button class="icon danger" data-act="delete" title="${t('inst.delete')}">${ICON.trash}</button>
       </div>
       <div class="progress ${state.busy.has(i.id) ? 'on' : ''}"><i></i></div>
     </article>`).join('') : `
@@ -284,6 +316,7 @@ async function act(name, id) {
   if (name === 'folder') return api.invoke('open-folder', id);
   if (name === 'logs') return openConsole(id);
   if (name === 'mods') return openMods(id);
+  if (name === 'settings') return openInstSettings(id);
   if (name === 'kill') return api.invoke('kill', id);
   if (name === 'delete') {
     if (state.running.has(id)) return toast(t('inst.stop_first'), true);
@@ -415,7 +448,7 @@ function packModel(p) {
 function packCtx() {
   const n = Math.max(0, hits.findIndex(h => h.project_id === disc.sel));
   disc.sel = hits[n]?.project_id ?? null;
-  return { items: hits.map(packModel), n, total: disc.total.toLocaleString(I18N.lang), unit: t('lay.unit_pack'), hint: t('hint.install'), label: t('nav.discover'),
+  return { items: hits.map(packModel), n, total: disc.total.toLocaleString(I18N.lang), ram: state.settings.ram || 4096, unit: t('lay.unit_pack'), hint: t('hint.install'), label: t('nav.discover'),
     empty: [t('disc.nothing'), t('disc.no_match', { q: query })],
     controls: `<label class="search compact"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="pack-q" type="search" placeholder="${t('disc.search_short')}"></label>${viewToggle()}`,
     bind: top => { const q = top.querySelector('input'); q.value = query; q.oninput = onSearchInput; } };
@@ -480,6 +513,56 @@ async function openPack(p) {
   };
 }
 $('#pack-dlg').addEventListener('cancel', e => { if ($('#pack-cancel')?.disabled) e.preventDefault(); });
+
+// ---------- instance settings (name, memory, Java, JVM flags, cover image) ----------
+let instEdit = null;
+const gb = mb => (mb / 1024).toFixed(1).replace('.0', '') + ' GB';
+const instForm = $('#inst-form');
+function paintInstCover() {
+  const i = state.instances.find(x => x.id === instEdit);
+  if (!i) return;
+  const pic = i.coverUrl || i.banner || i.icon;
+  $('#inst-cover-img').innerHTML = pic ? `<img src="${esc(pic)}" alt="">` : `<span>${esc(t('is.cover_none'))}</span>`;
+  $('#inst-cover-reset').disabled = !i.coverUrl;
+}
+function openInstSettings(id) {
+  const i = state.instances.find(x => x.id === id), global = state.settings.ram || 4096, f = instForm;
+  instEdit = id;
+  f.name.value = i.name;
+  f.ramOwn.checked = !!i.ram;
+  f.ram.value = i.ram || global;
+  f.ram.disabled = !i.ram;
+  $('#inst-ram-val').textContent = gb(+f.ram.value);
+  $('#inst-ram-default').textContent = t('is.ram_default', { gb: gb(global) });
+  f.javaPath.value = i.javaPath || '';
+  f.jvmArgs.value = i.jvmArgs || '';
+  paintInstCover();
+  $('#inst-dlg').showModal();
+}
+instForm.ramOwn.onchange = () => {
+  instForm.ram.disabled = !instForm.ramOwn.checked;
+  if (!instForm.ramOwn.checked) instForm.ram.value = state.settings.ram || 4096;
+  $('#inst-ram-val').textContent = gb(+instForm.ram.value);
+};
+instForm.ram.oninput = () => ($('#inst-ram-val').textContent = gb(+instForm.ram.value));
+$('#inst-cover-pick').onclick = async () => {
+  try { if (await api.invoke('instance-cover', instEdit)) { await loadInstances(); paintInstCover(); } } catch (e) { toast(errMsg(e), true); }
+};
+$('#inst-cover-reset').onclick = async () => {
+  try { await api.invoke('instance-cover-clear', instEdit); await loadInstances(); paintInstCover(); } catch (e) { toast(errMsg(e), true); }
+};
+// save only on the Save button; a validation error keeps the dialog open
+instForm.onsubmit = async e => {
+  if (e.submitter?.value !== 'ok') return;
+  e.preventDefault();
+  try {
+    await api.invoke('update-instance', instEdit, { name: instForm.name.value, ram: instForm.ramOwn.checked ? +instForm.ram.value : null,
+      javaPath: instForm.javaPath.value.trim(), jvmArgs: instForm.jvmArgs.value.trim() });
+    $('#inst-dlg').close();
+    toast(t('is.saved'));
+    await loadInstances();
+  } catch (err) { toast(errMsg(err), true); }
+};
 
 // ---------- per-instance mods ----------
 const mods = { id: null, installed: [], tab: 'installed', q: '', hits: [], busy: new Set(), timer: null };

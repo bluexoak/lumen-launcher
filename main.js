@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, shell, safeStorage, session } = require('electron');
+const { app, BrowserWindow, ipcMain, shell, safeStorage, session, dialog } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const L = require('./launcher');
@@ -39,6 +39,20 @@ handle('create', async ({ name, mc, loader }) => {
   return L.createInstance({ name: String(name || '').slice(0, 40), mc, loader, loaderVersion: loader === 'vanilla' ? null : await L.latestLoader(loader, mc) });
 });
 handle('delete', id => { if (!running.has(id)) return L.deleteInstance(id); });
+handle('update-instance', (id, patch) => L.updateInstance(id, patch));
+// the picture comes from the OS file dialog, so the page can never hand in an arbitrary path
+handle('instance-cover', async id => {
+  const r = await dialog.showOpenDialog(win, { properties: ['openFile'], filters: [{ name: 'Images', extensions: ['png', 'jpg', 'jpeg', 'webp'] }] });
+  if (r.canceled || !r.filePaths[0]) return false;
+  await L.setInstanceCover(id, r.filePaths[0]);
+  return true;
+});
+handle('instance-cover-clear', id => L.clearInstanceCover(id));
+// window buttons take the colour of whatever the page shows behind them
+handle('titlebar', (color, symbolColor) => {
+  const hex = /^#[0-9a-f]{6}$/i;
+  if (hex.test(color) && hex.test(symbolColor)) win?.setTitleBarOverlay({ color, symbolColor, height: 40 });
+});
 handle('open-folder', id => shell.openPath(id ? L.instDir(id) : L.ROOT));
 handle('settings', L.getSettings);
 // the account entry is written only by the login flow below, never by the page

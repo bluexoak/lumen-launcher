@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
   <meta charset="utf-8">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' https: data:; style-src 'self' 'unsafe-inline'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' https: data: file:; style-src 'self' 'unsafe-inline'">
   <title>Lumen</title>
   <link rel="stylesheet" href="style.css">
 </head>
@@ -110,6 +110,25 @@
   </dialog>
 
   <dialog id="pack-dlg"></dialog>
+
+  <dialog id="inst-dlg">
+    <form method="dialog" id="inst-form">
+      <h2 data-i18n="inst.settings"></h2>
+      <div class="inst-cover">
+        <div class="inst-cover-img" id="inst-cover-img"></div>
+        <div class="inst-cover-text"><b data-i18n="is.cover"></b><small data-i18n="is.cover_hint"></small>
+          <div class="row"><button type="button" class="btn sm" id="inst-cover-pick" data-i18n="is.cover_pick"></button><button type="button" class="btn ghost sm" id="inst-cover-reset" data-i18n="is.cover_reset"></button></div></div>
+      </div>
+      <label class="field"><span data-i18n="is.name"></span><input name="name" maxlength="40" required></label>
+      <div class="field"><span><span data-i18n="is.ram"></span> <b id="inst-ram-val"></b></span>
+        <label class="check own"><input type="checkbox" name="ramOwn"> <span data-i18n="is.ram_own"></span></label>
+        <input name="ram" type="range" min="1024" max="16384" step="512">
+        <small id="inst-ram-default"></small></div>
+      <label class="field"><span><span data-i18n="is.java"></span> <em data-i18n="set.java_em"></em></span><input name="javaPath" data-i18n-ph="is.java_ph" spellcheck="false"></label>
+      <label class="field"><span><span data-i18n="is.args"></span> <em data-i18n="set.java_em"></em></span><input name="jvmArgs" data-i18n-ph="is.args_ph" spellcheck="false"><small data-i18n="is.args_hint"></small></label>
+      <div class="row end"><button class="btn ghost" value="cancel" formnovalidate data-i18n="common.cancel"></button><button class="btn primary" value="ok" data-i18n="common.save"></button></div>
+    </form>
+  </dialog>
 
   <dialog id="ms-dlg">
     <div class="dlg">

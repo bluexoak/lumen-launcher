@@ -2,6 +2,7 @@
 const fs = require('fs'), fsp = fs.promises, path = require('path'), crypto = require('crypto'), os = require('os');
 const { spawn, execFile } = require('child_process');
 const execFileP = require('util').promisify(execFile);
+const { pathToFileURL } = require('url');
 const I = require('./i18n');
 
 const ROOT = process.env.LUMEN_HOME || path.join(process.env.APPDATA || os.homedir(), '.lumen');
@@ -237,7 +238,8 @@ async function launch(inst, settings, onLog, onProgress) {
   const v = await resolveVersion(inst.mc, inst.loader, inst.loaderVersion);
   const { cp, nativesDir, virtualDir } = await install(v, gameDir, onProgress);
   cp.push(path.join(P.versions, v.jar, v.jar + '.jar'));
-  const java = await findJava(v.javaVersion?.majorVersion || 8, settings.javaPath);
+  // instance values (instance settings dialog) win over the global ones
+  const java = await findJava(v.javaVersion?.majorVersion || 8, inst.javaPath || settings.javaPath);
   const a = settings.auth; // Microsoft account from main.js, else offline name
   const name = a?.name || settings.username || 'Player';
   const vars = {
@@ -254,7 +256,8 @@ async function launch(inst, settings, onLog, onProgress) {
   const game = v.arguments ? flat(v.arguments.game || []) : v.minecraftArguments.split(' ');
   const log = v.logging?.client;
   const args = [
-    `-Xmx${settings.ram || 4096}M`, '-Dlog4j2.formatMsgNoLookups=true',
+    `-Xmx${inst.ram || settings.ram || 4096}M`, '-Dlog4j2.formatMsgNoLookups=true',
+    ...(inst.jvmArgs ? inst.jvmArgs.trim().split(/\s+/) : []),
     ...(log ? [log.argument.replace('${path}', path.join(P.assets, 'log_configs', log.file.id))] : []),
     ...jvm.map(sub), v.mainClass, ...game.map(sub),
   ];
@@ -276,8 +279,48 @@ function listInstances() {
   let dirs = [];
   try { dirs = fs.readdirSync(P.instances); } catch {}
   const modCount = d => { try { return fs.readdirSync(path.join(P.instances, d, 'mods')).filter(f => /\.jar$/i.test(f)).length; } catch { return 0; } };
-  return dirs.flatMap(d => { try { return [{ ...JSON.parse(fs.readFileSync(path.join(P.instances, d, 'instance.json'), 'utf8')), modCount: modCount(d) }]; } catch { return []; } })
+  // coverUrl: the user's own picture as a file:// URL; the version query busts the image cache after a change
+  const cover = (d, i) => (i.cover ? `${pathToFileURL(path.join(P.instances, d, i.cover)).href}?v=${i.coverVersion || 0}` : null);
+  return dirs.flatMap(d => { try { const i = JSON.parse(fs.readFileSync(path.join(P.instances, d, 'instance.json'), 'utf8')); return [{ ...i, modCount: modCount(d), coverUrl: cover(d, i) }]; } catch { return []; } })
     .sort((a, b) => (b.lastPlayed || b.created) - (a.lastPlayed || a.created));
+}
+
+// what the instance settings dialog may change, with its check; null/'' means "use the global setting"
+const javaPathOk = v => /^java(w)?\.exe$/i.test(path.basename(v)) && fs.existsSync(v);
+const INSTANCE_EDIT = {
+  name: v => (typeof v === 'string' && v.trim().length >= 1 && v.length <= 40) || I.t('err.inst_name'),
+  ram: v => v === null || (Number.isInteger(v) && v >= 1024 && v <= 65536) || 'ram: 1024–65536 MB',
+  javaPath: v => v === '' || javaPathOk(v) || I.t('err.java_path'),
+  // only plain JVM flags (-Xss2m, -XX:+UseG1GC, -Dkey=value): no paths with spaces, no shell syntax
+  jvmArgs: v => v === '' || (typeof v === 'string' && v.length <= 1000 && v.trim().split(/\s+/).every(a => /^-[\w:.+=/,%-]+$/.test(a))) || I.t('err.jvm_args'),
+};
+function updateInstance(id, patch) {
+  const inst = getInstance(id), clean = {};
+  for (const [k, v] of Object.entries(patch || {})) {
+    if (!INSTANCE_EDIT[k]) continue;
+    const ok = INSTANCE_EDIT[k](v);
+    if (ok !== true) throw new Error(ok);
+    clean[k] = typeof v === 'string' ? v.trim() : v;
+  }
+  saveInstance({ ...inst, ...clean });
+  return getInstance(id);
+}
+
+// the user's own cover picture, copied into the instance folder (the original may move or vanish)
+const COVER_TYPES = ['.png', '.jpg', '.jpeg', '.webp'];
+async function setInstanceCover(id, file) {
+  const ext = path.extname(file).toLowerCase(), st = await fsp.stat(file);
+  if (!COVER_TYPES.includes(ext) || !st.isFile() || st.size > 15 * 1024 * 1024) throw new Error(I.t('err.cover'));
+  const inst = getInstance(id), dir = instDir(id);
+  if (inst.cover) await fsp.rm(path.join(dir, inst.cover), { force: true });
+  await fsp.copyFile(file, path.join(dir, 'cover' + ext));
+  saveInstance({ ...inst, cover: 'cover' + ext, coverVersion: Date.now() });
+}
+async function clearInstanceCover(id) {
+  const inst = getInstance(id);
+  if (inst.cover) await fsp.rm(path.join(instDir(id), inst.cover), { force: true });
+  const { cover, coverVersion, ...rest } = inst;
+  saveInstance(rest);
 }
 const getInstance = id => JSON.parse(fs.readFileSync(path.join(instDir(id), 'instance.json'), 'utf8'));
 function saveInstance(inst) { fs.mkdirSync(instDir(inst.id), { recursive: true }); fs.writeFileSync(path.join(instDir(inst.id), 'instance.json'), JSON.stringify(inst, null, 2)); }
@@ -296,7 +339,7 @@ function getSettings() { try { return JSON.parse(fs.readFileSync(settingsFile, '
 const SETTINGS = {
   username: v => /^\w{3,16}$/.test(v) || I.t('err.name'),
   ram: v => (Number.isInteger(v) && v >= 1024 && v <= 65536) || 'ram: 1024–65536 MB',
-  javaPath: v => v === '' || (/^java(w)?\.exe$/i.test(path.basename(v)) && fs.existsSync(v)) || I.t('err.java_path'),
+  javaPath: v => v === '' || javaPathOk(v) || I.t('err.java_path'),
   clientId: v => v === '' || /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v) || I.t('err.client_id'),
   theme: v => ['nacht', 'papier', 'neon', 'pixel', 'poster'].includes(v) || 'theme',
   layout: v => ['book', 'carousel', 'list', 'shelf', 'terminal'].includes(v) || 'layout',
@@ -446,7 +489,7 @@ function modFile(id, file) {
 }
 const removeMod = (id, file) => fsp.rm(modFile(id, file));
 
-module.exports = { ROOT, instDir, listInstances, getInstance, saveInstance, createInstance, deleteInstance, getSettings, saveSettings,
+module.exports = { ROOT, instDir, listInstances, getInstance, saveInstance, createInstance, deleteInstance, updateInstance, setInstanceCover, clearInstanceCover, getSettings, saveSettings,
   mcVersions, latestLoader, launch, searchModpacks, modpackVersions, installModpack, listMods, searchMods, installMod, updateMod, removeMod };
 
 if (require.main === module) { // node launcher.js → self-check
@@ -472,6 +515,11 @@ if (require.main === module) { // node launcher.js → self-check
   assert.throws(() => saveSettings({ ram: '4096; rm' }), /ram/);
   assert.throws(() => saveSettings({ javaPath: 'C:\\Windows\\System32\\cmd.exe' }), /java/i);
   assert.ok(packHostAllowed('https://cdn.modrinth.com/data/x.jar'));
+  assert.ok(INSTANCE_EDIT.jvmArgs('-XX:+UseG1GC -Xss2m -Dfoo=bar -XX:MaxGCPauseMillis=50') === true);
+  for (const bad of ['-Dx=1 && calc', '-jar C:\\evil.jar', 'notaflag', '-Dx="a b"']) assert.notEqual(INSTANCE_EDIT.jvmArgs(bad), true, bad);
+  assert.notEqual(INSTANCE_EDIT.ram(512), true);
+  assert.equal(INSTANCE_EDIT.ram(null), true);
+  assert.notEqual(INSTANCE_EDIT.name('   '), true);
   for (const bad of ['http://cdn.modrinth.com/x.jar', 'https://evil.example/x.jar', 'https://cdn.modrinth.com.evil.example/x', 'nope']) assert.ok(!packHostAllowed(bad), bad);
   console.log('ok');
 }
