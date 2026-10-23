@@ -32,6 +32,7 @@
       <div class="lang" aria-label="{{lang_label}}">
         <a href="/de/" hreflang="de" lang="de" data-lang="de" aria-current="{{is_de}}">DE</a><a href="/en/" hreflang="en" lang="en" data-lang="en" aria-current="{{is_en}}">EN</a>
       </div>
+      <a class="btn primary sm nav-dl" href="#download">{{nav_download}}</a>
     </div>
   </header>
 
@@ -43,7 +44,7 @@
           <h1>{{hero_title}}</h1>
           <p class="lede">{{hero_lede}}</p>
           <div class="cta">
-            <a class="btn primary" href="#start"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>{{hero_cta}}</a>
+            <a class="btn primary" href="#download"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m-5-5 5 5 5-5M5 20h14"/></svg>{{hero_cta}}</a>
             <a class="btn" href="#layouts">{{hero_cta2}}</a>
           </div>
           <div class="stats">
@@ -226,6 +227,22 @@
         </div>
         <div class="note rv"><span aria-hidden="true">⚠</span><p>{{smartscreen}}</p></div>
         <div class="reqs rv">{{reqs}}</div>
+      </div>
+    </section>
+
+    <section id="download" style="padding-top:0">
+      <div class="wrap">
+        <div class="dl rv">
+          <img src="/icon.png" alt="" width="84" height="84" style="margin:0 auto">
+          <div class="eyebrow" style="margin-top:22px">{{dl_eyebrow}}</div>
+          <h2>{{dl_title}}</h2>
+          <p>{{dl_text}}</p>
+          <div class="cta">
+            <a class="btn primary" href="/download/setup"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m-5-5 5 5 5-5M5 20h14"/></svg>{{dl_setup}}</a>
+            <a class="btn" href="/download/zip">{{dl_zip}}</a>
+          </div>
+          <p class="dl-meta">{{dl_meta}} · <a href="https://github.com/bluexoak/lumen-launcher/releases">{{dl_all}}</a> · <a href="https://github.com/bluexoak/lumen-launcher">{{dl_source}}</a></p>
+        </div>
       </div>
     </section>
 

@@ -25,6 +25,23 @@ const SECURITY_HEADERS = {
   'Permissions-Policy': 'camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()',
   'Cross-Origin-Opener-Policy': 'same-origin',
 };
+// /download/setup and /download/zip always point at the newest GitHub release, so the site never needs a version bump.
+// The release lookup is cached at the edge for 10 minutes (GitHub allows only 60 anonymous API calls per hour per IP).
+const REPO = 'bluexoak/lumen-launcher';
+const DOWNLOADS = { setup: /^Lumen-Setup-.+\.exe$/, zip: /^Lumen-.+-win-x64\.zip$/ };
+async function latestAsset(kind, ctx) {
+  const key = new Request(`https://${CANONICAL}/__latest-release`);
+  let res = await caches.default.match(key);
+  if (!res) {
+    const gh = await fetch(`https://api.github.com/repos/${REPO}/releases/latest`, { headers: { 'User-Agent': CANONICAL, Accept: 'application/vnd.github+json' } });
+    if (!gh.ok) return null;
+    res = new Response(gh.body, { headers: { 'Content-Type': 'application/json', 'Cache-Control': 'max-age=600' } });
+    ctx.waitUntil(caches.default.put(key, res.clone()));
+  }
+  const release = await res.json();
+  return release.assets?.find(a => DOWNLOADS[kind].test(a.name))?.browser_download_url || null;
+}
+
 const secure = res => {
   const r = new Response(res.body, res);
   for (const [k, v] of Object.entries(SECURITY_HEADERS)) r.headers.set(k, v);
@@ -32,11 +49,17 @@ const secure = res => {
 };
 
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const url = new URL(request.url);
     // www.lumenlauncher.app and the old *.workers.dev address keep working but point to one canonical home
     if (url.hostname !== CANONICAL && !LOCAL.test(url.hostname)) {
       return secure(Response.redirect(`https://${CANONICAL}${url.pathname}${url.search}`, 301));
+    }
+    const dl = /^\/download\/(setup|zip)\/?$/.exec(url.pathname);
+    if (dl) {
+      const asset = await latestAsset(dl[1], ctx).catch(() => null);
+      // if GitHub is unreachable, the release page still offers every file
+      return secure(new Response(null, { status: 302, headers: { Location: asset || `https://github.com/${REPO}/releases/latest`, 'Cache-Control': 'no-store' } }));
     }
     if (url.pathname !== '/') return secure(await env.ASSETS.fetch(request));
     const lang = pickLang(request.headers.get('Cookie') || '', request.headers.get('Accept-Language') || '');

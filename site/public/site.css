@@ -29,6 +29,9 @@ kbd { display: inline-block; min-width: 26px; padding: 2px 8px; border: 1px soli
 .lang { display: flex; padding: 3px; border-radius: 10px; border: 1px solid var(--line-2); font: 600 12px var(--mono); }
 .lang a { padding: 4px 8px; border-radius: 7px; text-decoration: none; color: var(--muted); }
 .lang a[aria-current="true"] { background: rgba(236,238,243,.1); color: var(--text); }
+.nav-dl { margin-left: 4px; }
+.dl-meta { margin-top: 24px !important; font-size: 14px; color: var(--muted) !important; }
+.dl-meta a { color: var(--text); text-underline-offset: 3px; }
 .btn { display: inline-flex; align-items: center; gap: 10px; height: 46px; padding: 0 22px; border-radius: 12px; font: 600 15px var(--body); text-decoration: none; border: 1px solid var(--line-2); cursor: pointer; transition: transform .15s var(--ease), filter .15s, background .15s; background: transparent; color: var(--text); }
 .btn:hover { transform: translateY(-1px); filter: brightness(1.1); }
 .btn.primary { background: var(--accent); color: var(--ink); border-color: transparent; box-shadow: 0 12px 40px -12px rgba(74,222,128,.6); }

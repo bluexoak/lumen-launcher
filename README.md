@@ -7,6 +7,12 @@
 
 <p align="center"><img src="site/public/img/en/layout-book.jpg" width="820" alt="Lumen in the Art Book layout"></p>
 
+## Download
+
+Get the latest **installer** or **ZIP** (no installation) from [Releases](https://github.com/bluexoak/lumen-launcher/releases/latest) or [lumenlauncher.app](https://lumenlauncher.app). Windows 10/11, 64-bit.
+
+The builds aren't code-signed yet: if SmartScreen says *"Windows protected your PC"*, click **More info → Run anyway**. Each release lists SHA-256 checksums.
+
 ## Features
 
 - **Instances** for any Minecraft version – vanilla, Fabric or Quilt – each with its own worlds, mods and settings
