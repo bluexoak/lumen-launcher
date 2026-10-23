@@ -29,7 +29,35 @@ app.whenReady().then(() => {
   win.webContents.on('will-navigate', (e, url) => { if (url !== PAGE) e.preventDefault(); });
   win.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
   win.loadFile(path.join(__dirname, 'index.html'));
+  win.webContents.once('did-finish-load', checkUpdates);
+  setInterval(checkUpdates, 6 * 3600e3);
 });
+
+// ---------- updates ----------
+// Setup install: electron-updater fetches latest.yml from the newest GitHub release, downloads in the background
+// and checks the sha512 from it; the new version installs on restart. A ZIP copy can't replace itself, so it only gets a notice.
+const RELEASES = 'https://github.com/bluexoak/lumen-launcher/releases/latest';
+const newer = (a, b) => { const x = a.split('.').map(Number), y = b.split('.').map(Number); for (let k = 0; k < 3; k++) if (x[k] !== y[k]) return x[k] > y[k]; return false; };
+let updater = null, noticed = '';
+async function checkUpdates() {
+  if (!app.isPackaged) return;
+  try {
+    if (fs.existsSync(path.join(path.dirname(process.execPath), 'Uninstall Lumen.exe'))) {
+      if (!updater) {
+        updater = require('electron-updater').autoUpdater;
+        updater.on('update-downloaded', i => send('update', 'ready', i.version));
+        updater.on('error', e => console.error('update:', e.message));
+      }
+      await updater.checkForUpdates();
+    } else {
+      const r = await fetch('https://api.github.com/repos/bluexoak/lumen-launcher/releases/latest', { headers: { Accept: 'application/vnd.github+json', 'User-Agent': 'lumen-launcher' } });
+      const v = r.ok && String((await r.json()).tag_name || '').replace(/^v/, '');
+      if (/^\d+\.\d+\.\d+$/.test(v) && newer(v, app.getVersion()) && v !== noticed) { noticed = v; send('update', 'available', v); }
+    }
+  } catch (e) { console.error('update check:', e.message); }
+}
+handle('update-install', () => updater?.quitAndInstall());
+handle('update-open', () => shell.openExternal(RELEASES));
 app.on('window-all-closed', () => app.quit());
 
 handle('instances', L.listInstances);

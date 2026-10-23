@@ -5,7 +5,7 @@
     de: {
       'nav.library': 'Bibliothek', 'nav.discover': 'Entdecken', 'nav.settings': 'Einstellungen',
       'acc.offline': 'Offline-Konto', 'acc.msa': 'Microsoft-Konto',
-      'common.close': 'Schließen', 'common.cancel': 'Abbrechen', 'common.loading': 'Lädt…',
+      'common.close': 'Schließen', 'common.error': 'Fehler', 'common.cancel': 'Abbrechen', 'common.loading': 'Lädt…',
 
       'lib.new': 'Neue Instanz', 'lib.count1': '{n} Instanz', 'lib.count': '{n} Instanzen',
       'lib.empty': 'Noch keine Instanzen', 'lib.empty_text': 'Erstelle eine eigene oder installiere ein Modpack.', 'lib.empty_discover': 'Modpacks entdecken',
@@ -22,7 +22,7 @@
       'is.args_hint': 'Nur für Fortgeschrittene. Werden vor dem Start an Java übergeben.',
       'is.cover': 'Titelbild', 'is.cover_hint': 'Erscheint im Buch, im Karussell, in der Liste und als Buchumschlag im Regal. PNG, JPG oder WebP, bis 15 MB.',
       'is.cover_pick': 'Bild wählen…', 'is.cover_reset': 'Zurücksetzen', 'is.cover_none': 'Kein eigenes Bild', 'is.saved': 'Einstellungen gespeichert.',
-      'common.save': 'Speichern',
+      'common.save': 'Speichern', 'upd.ready': 'Lumen {v} ist heruntergeladen und wird beim nächsten Start installiert.', 'upd.restart': 'Jetzt neu starten', 'upd.available': 'Lumen {v} ist verfügbar.', 'upd.download': 'Herunterladen',
 
       'view.layout': 'Layout-Ansicht (G)', 'view.grid': 'Raster (G)',
       'hint.browse': 'Blättern', 'hint.grid': 'Raster', 'hint.install': 'Installieren',
@@ -97,7 +97,7 @@
     en: {
       'nav.library': 'Library', 'nav.discover': 'Discover', 'nav.settings': 'Settings',
       'acc.offline': 'Offline account', 'acc.msa': 'Microsoft account',
-      'common.close': 'Close', 'common.cancel': 'Cancel', 'common.loading': 'Loading…',
+      'common.close': 'Close', 'common.error': 'Error', 'common.cancel': 'Cancel', 'common.loading': 'Loading…',
 
       'lib.new': 'New instance', 'lib.count1': '{n} instance', 'lib.count': '{n} instances',
       'lib.empty': 'No instances yet', 'lib.empty_text': 'Create your own or install a modpack.', 'lib.empty_discover': 'Discover modpacks',
@@ -114,7 +114,7 @@
       'is.args_hint': 'Advanced. Passed to Java at launch.',
       'is.cover': 'Cover image', 'is.cover_hint': 'Shown in the book, the carousel, the list and as the book cover on the shelf. PNG, JPG or WebP, up to 15 MB.',
       'is.cover_pick': 'Choose image…', 'is.cover_reset': 'Reset', 'is.cover_none': 'No custom image', 'is.saved': 'Settings saved.',
-      'common.save': 'Save',
+      'common.save': 'Save', 'upd.ready': 'Lumen {v} has been downloaded and installs the next time you start it.', 'upd.restart': 'Restart now', 'upd.available': 'Lumen {v} is available.', 'upd.download': 'Download',
 
       'view.layout': 'Layout view (G)', 'view.grid': 'Grid (G)',
       'hint.browse': 'Browse', 'hint.grid': 'Grid', 'hint.install': 'Install',

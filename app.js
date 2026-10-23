@@ -29,10 +29,25 @@ const state = { instances: [], running: new Set(), busy: new Set(), logs: new Ma
 function toast(msg, err) {
   const t = document.createElement('div');
   t.className = 'toast' + (err ? ' err' : '');
+  if (err) t.dataset.pre = I18N.t('common.error');
   t.textContent = msg;
   $('#toasts').append(t);
   setTimeout(() => t.remove(), err ? 7000 : 3500);
 }
+
+// new version: Setup copies have it downloaded already (restart installs it), ZIP copies get a link to the download page
+api.on('update', (kind, version) => {
+  $('#toasts .update')?.remove();
+  const el = document.createElement('div');
+  el.className = 'toast update';
+  el.innerHTML = `<span></span><button class="btn primary sm"></button><button class="icon" title="${esc(t('common.close'))}"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>`;
+  el.querySelector('span').textContent = t(kind === 'ready' ? 'upd.ready' : 'upd.available', { v: version });
+  const go = el.querySelector('.btn');
+  go.textContent = t(kind === 'ready' ? 'upd.restart' : 'upd.download');
+  go.onclick = () => api.invoke(kind === 'ready' ? 'update-install' : 'update-open');
+  el.querySelector('.icon').onclick = () => el.remove();
+  $('#toasts').append(el);
+});
 
 // ---------- navigation ----------
 function show(view) {
