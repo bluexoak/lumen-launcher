@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Lumen · Minecraft launcher for Windows</title>
-  <meta name="description" content="Lumen is a free Minecraft launcher for Windows: vanilla, Fabric and Quilt, modpacks and mods from Modrinth, five completely different layouts and controller support.">
+  <meta name="description" content="Lumen is a free Minecraft launcher for Windows: vanilla, Fabric, Quilt, Forge and NeoForge, modpacks, mods and shaders from Modrinth, five completely different layouts and controller support.">
   <meta property="og:title" content="Lumen · Minecraft launcher for Windows">
   <meta property="og:description" content="A Minecraft launcher that shows your instances like an art book, a console home screen or a CRT monitor.">
   <meta property="og:image" content="https://lumenlauncher.app/img/en/layout-book.jpg">
@@ -41,7 +41,7 @@
       <div class="wrap">
         <h1>A Minecraft launcher that doesn’t look like a form.</h1>
         <div class="hero-side">
-          <p class="lede">Lumen installs vanilla, Fabric, Quilt, modpacks and mods like any other launcher. It just doesn’t show your instances as a table, but as an art book, a console home screen, a bookshelf or a CRT monitor. With mouse, keyboard or controller.</p>
+          <p class="lede">Lumen installs vanilla, Fabric, Quilt, Forge, NeoForge, modpacks and mods like any other launcher. It just doesn’t show your instances as a table, but as an art book, a console home screen, a bookshelf or a CRT monitor. With mouse, keyboard or controller.</p>
           <div class="cta">
             <a class="btn primary" href="/download/setup"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m-5-5 5 5 5-5M5 20h14"/></svg>Download for Windows</a>
             <a class="btn" href="#layouts">The five layouts</a>
@@ -65,10 +65,12 @@
     <section id="features">
       <div class="wrap">
         <div class="head"><h2>What Lumen handles for you</h2><p>Lumen sets up versions, loaders, libraries, assets and Java itself. You pick what you want to play.</p></div>
-        <dl class="specs"><div><dt>Instances for every version</dt><dd>Vanilla, Fabric or Quilt, from 1.8.9 to the latest release, with snapshots if you want them. Every instance has its own worlds and mods, its own memory, Java arguments and cover image.</dd></div>
+        <dl class="specs"><div><dt>Instances for every version</dt><dd>Vanilla, Fabric, Quilt, Forge or NeoForge, from 1.8.9 to the latest release, with snapshots if you want them. Every instance has its own worlds and mods, its own memory, Java arguments and cover image, and counts its playtime.</dd></div>
           <div><dt>Java sorts itself out</dt><dd>Lumen knows which Java a Minecraft version needs (8, 17, 21 or 25), uses an installed one or downloads the right one from Eclipse Temurin.</dd></div>
           <div><dt>Modpacks from Modrinth</dt><dd>Pick a pack, pick a version, install. Every file is checked against its checksum, and Lumen applies the pack’s config.</dd></div>
-          <div><dt>A mod browser per instance</dt><dd>Search, install and remove mods that match the version and loader. Dependencies like Fabric API come along automatically.</dd></div>
+          <div><dt>Mods, resource packs, shaders</dt><dd>Search, install and remove them per instance, matching the version and loader. Dependencies like Fabric API come along automatically, and Iris for shaders.</dd></div>
+          <div><dt>Moving over from other launchers</dt><dd>Lumen brings over instances from the official launcher, Prism, CurseForge, ATLauncher and the Modrinth App, with worlds, mods and settings. The other launcher stays as it is.</dd></div>
+          <div><dt>Sharing</dt><dd>Export an instance as a .mrpack for friends, and import .mrpack files in one click.</dd></div>
           <div><dt>Updates</dt><dd>Update outdated mods one by one or all at once, always to the newest stable version. Lumen keeps itself up to date too.</dd></div>
           <div><dt>Controller</dt><dd>Browse with the d-pad, launch with A, go back with B. Plug in a controller and Lumen shows the matching buttons.</dd></div>
           <div><dt>Offline or with Microsoft</dt><dd>Playing offline with a name works right away. Microsoft sign-in is built in and works once Mojang has approved the app. Windows stores the login encrypted.</dd></div></dl>
@@ -117,13 +119,13 @@
             <div class="head"><h2>Flip through modpacks</h2><p>The Discover page pulls modpacks live from Modrinth and shows them in your layout, with gallery image, author, downloads and supported versions.</p></div>
             <ul class="points"><li><b>Search as you type.</b> Results appear instantly, and more load as you keep flipping.</li>
             <li><b>Install in one step.</b> Lumen creates the instance, downloads every mod and applies the pack’s config.</li>
-            <li><b>Fabric and Quilt.</b> Forge and NeoForge packs are marked; Lumen can’t install those yet.</li></ul>
+            <li><b>Every common loader.</b> Fabric, Quilt, Forge and NeoForge: Lumen sets up the loader itself.</li></ul>
           </div>
           <img class="shot" src="/img/en/discover-carousel.jpg" alt="Discover page in the Carousel layout with a full-screen modpack" width="1440" height="900" loading="lazy">
         </div>
         <div class="split flip">
           <div>
-            <div class="head"><h2>Mods and updates</h2><p>Every Fabric and Quilt instance has its own mod browser. Lumen recognises installed mods by the file’s fingerprint, including the ones that came with a modpack.</p></div>
+            <div class="head"><h2>Mods and updates</h2><p>Every instance with a mod loader has its own mod browser. Lumen recognises installed mods by the file’s fingerprint, including the ones that came with a modpack.</p></div>
             <ul class="points"><li><b>Dependencies come along.</b> Install Iris and Sodium comes with it.</li>
             <li><b>Outdated mods at a glance.</b> Old and new version sit right in the list, and one click updates them all.</li>
             <li><b>Stable versions only.</b> Updates never jump to a beta or alpha.</li></ul>
@@ -180,7 +182,8 @@
         <div class="faq"><details><summary>Can I play on regular online servers?</summary><p>For that you need the Microsoft sign-in that Lumen has built in. It works once Mojang approves the app for the Minecraft API; that’s been applied for. Until then you play offline: in singleplayer and on servers with <code>online-mode=false</code>, such as your own server with friends.</p></details>
           <details><summary>Do I need to own Minecraft?</summary><p>For the Microsoft sign-in and official servers, yes: Lumen checks that your account owns Minecraft: Java Edition. If you play regularly, please buy the game.</p></details>
           <details><summary>How do I get updates?</summary><p>The installer version downloads new versions in the background and installs them the next time you start it. The ZIP version shows a notice with a download link.</p></details>
-          <details><summary>Are Forge and NeoForge supported?</summary><p>Not yet. Lumen handles vanilla, Fabric and Quilt. Modpacks that need Forge or NeoForge are marked on the Discover page.</p></details>
+          <details><summary>Are Forge and NeoForge supported?</summary><p>Yes, since version 0.1.4: NeoForge, and Forge from Minecraft 1.13 on. Lumen downloads and sets up the loader itself, for modpacks too.</p></details>
+          <details><summary>Can I move over from another launcher?</summary><p>Yes. Under “New instance” → “From another launcher”, Lumen finds instances from the official launcher, Prism, CurseForge, ATLauncher and the Modrinth App and copies worlds, mods, packs and settings. The other launcher stays as it is.</p></details>
           <details><summary>Do I have to install Java?</summary><p>No. Lumen looks for a suitable installed Java and otherwise downloads the right one from Eclipse Temurin.</p></details>
           <details><summary>Where are my worlds and mods?</summary><p>In <code>%APPDATA%\.lumen</code>, each instance in its own folder under <code>instances</code>. The folder icon on an instance opens it directly. Uninstalling Lumen keeps your data.</p></details>
           <details><summary>Is the app available in German?</summary><p>Yes. Lumen speaks English and German and follows your system language; you can switch under Settings → Language.</p></details>

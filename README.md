@@ -15,16 +15,19 @@ The builds aren't code-signed yet: if SmartScreen says *"Windows protected your 
 
 ## Features
 
-- **Instances** for any Minecraft version – vanilla, Fabric or Quilt – each with its own worlds, mods and settings
+- **Instances** for any Minecraft version – vanilla, Fabric, Quilt, Forge (1.13+) or NeoForge – each with its own worlds, mods, memory, Java arguments, cover image and playtime
 - **Modpacks** from Modrinth in one click (`.mrpack`, every file checksum-verified)
-- **Mod browser per instance** with automatic dependencies and one-click updates (stable releases only)
+- **Content browser per instance** for mods, resource packs and shader packs (Iris/Oculus installed along), with automatic dependencies and one-click updates (stable releases only)
+- **Move over** from the official launcher, Prism/PolyMC, CurseForge, ATLauncher or the Modrinth App: worlds, mods, packs and settings are copied
+- **Share** an instance as a `.mrpack`, import `.mrpack` files, duplicate instances
+- **Updates itself** (installer version)
 - **Java handled for you**: an installed JDK/JRE of the right version is used, otherwise Eclipse Temurin is downloaded and verified
 - **Five layouts** – Art Book, Carousel, List, Shelf, Terminal – and **five colour schemes**, freely combinable
 - **Controller support**: d-pad to browse, A to play, B to go back, Y to switch views
 - **Offline play** with a player name, or **Microsoft sign-in** (see below)
 - **English and German** UI, following the system language by default
 
-Forge and NeoForge are not supported yet.
+Not supported: Forge before Minecraft 1.13, CurseForge-only modpacks.
 
 ## Run from source
 
@@ -55,7 +58,7 @@ Tokens are stored encrypted with Windows DPAPI (`%APPDATA%\.lumen\account.bin`).
 
 Everything Lumen downloads or creates lives in `%APPDATA%\.lumen` (instances, shared libraries and assets, Java runtimes, settings). Uninstalling Lumen leaves it in place.
 
-Lumen talks to Mojang/Microsoft (game files, sign-in), Modrinth (modpacks, mods, icons), Fabric/Quilt (loader metadata) and Adoptium (Java). It has no analytics or tracking.
+Lumen talks to Mojang/Microsoft (game files, sign-in), Modrinth (modpacks, mods, icons), Fabric/Quilt/Forge/NeoForge (loader metadata and installers), Adoptium (Java) and GitHub (update check). It has no analytics or tracking.
 
 ## Project layout
 

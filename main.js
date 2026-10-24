@@ -64,7 +64,7 @@ app.on('window-all-closed', () => app.quit());
 handle('instances', L.listInstances);
 handle('mc-versions', L.mcVersions);
 handle('create', async ({ name, mc, loader }) => {
-  if (!['vanilla', 'fabric', 'quilt'].includes(loader) || typeof mc !== 'string' || !/^[\w.-]{1,40}$/.test(mc)) throw new Error('invalid instance');
+  if (!['vanilla', 'fabric', 'quilt', 'forge', 'neoforge'].includes(loader) || typeof mc !== 'string' || !/^[\w.-]{1,40}$/.test(mc)) throw new Error('invalid instance');
   return L.createInstance({ name: String(name || '').slice(0, 40), mc, loader, loaderVersion: loader === 'vanilla' ? null : await L.latestLoader(loader, mc) });
 });
 handle('delete', id => { if (!running.has(id)) return L.deleteInstance(id); });

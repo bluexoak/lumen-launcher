@@ -284,6 +284,8 @@ input[type="range"]:disabled { opacity: .4; }
 .done { flex: none; padding: 0 12px; font-size: 13px; font-weight: 600; color: var(--accent); }
 .mod-list .empty { padding: 60px 20px; }
 .seg.kinds { grid-template-columns: repeat(var(--n), 1fr); }
+.push-left { margin-right: auto; }
+#new-form .seg { grid-template-columns: repeat(5, 1fr); }
 .import-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: -6px 0 4px; color: var(--muted); font-size: 13px; }
 .imp-list { display: grid; gap: 4px; max-height: 52vh; overflow-y: auto; margin: 0 -8px; padding: 0 8px; }
 .imp-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 12px; background: var(--bg); border: 1px solid var(--line); }

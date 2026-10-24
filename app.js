@@ -460,7 +460,7 @@ let query = '', offset = 0, hits = [], searchTimer;
 const disc = { sel: null, total: 0, loading: false };
 const PACK_LOADERS = ['fabric', 'quilt', 'forge', 'neoforge'];
 const packLoaders = p => p.categories.filter(c => PACK_LOADERS.includes(c));
-const packSupported = p => { const l = packLoaders(p); return !l.length || l.includes('fabric') || l.includes('quilt'); };
+const packSupported = () => true; // every loader Modrinth packs use is supported now
 const packItem = p => ({ id: p.project_id, name: p.title, icon: p.icon_url });
 const cap = s => s[0].toUpperCase() + s.slice(1);
 
@@ -542,7 +542,7 @@ async function openPack(p) {
   $('#pack-cancel').onclick = () => dlg.close();
   let vs;
   try { vs = await api.invoke('pack-versions', p.project_id); } catch (e) { return toast(errMsg(e), true); }
-  const ok = v => v.loaders.some(l => l === 'fabric' || l === 'quilt' || l === 'minecraft');
+  const ok = v => v.loaders.some(l => ['fabric', 'quilt', 'forge', 'neoforge', 'minecraft'].includes(l));
   $('#pack-ver').innerHTML = vs.map((v, n) => `<option value="${n}" ${ok(v) ? '' : 'disabled'}>${esc(v.version_number)} · MC ${esc(v.game_versions.join(', '))} · ${esc(v.loaders.join('/'))}${ok(v) ? '' : t('pack.unsupported')}</option>`).join('');
   const first = vs.findIndex(ok);
   if (first < 0) return toast(t('pack.needs_forge'), true);

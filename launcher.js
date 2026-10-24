@@ -1,4 +1,4 @@
-// Core: Mojang/Fabric/Quilt version resolution, downloads, Java, launch, Modrinth modpacks.
+// Core: Mojang/Fabric/Quilt/Forge/NeoForge version resolution, downloads, Java, launch, Modrinth modpacks.
 const fs = require('fs'), fsp = fs.promises, path = require('path'), crypto = require('crypto'), os = require('os');
 const { spawn, execFile } = require('child_process');
 const execFileP = require('util').promisify(execFile);
@@ -100,7 +100,31 @@ async function mcVersions() {
   return (await cachedJson(MANIFEST, path.join(P.cache, 'manifest.json'))).versions.map(v => ({ id: v.id, type: v.type }));
 }
 
+// Forge and NeoForge ship an installer jar: a version json (libraries + arguments, merged like Fabric's profile) and an
+// install profile whose processors patch the vanilla game into files under libraries/. Lumen runs those processors once.
+const FORGE = {
+  forge: (mc, v) => `https://maven.minecraftforge.net/net/minecraftforge/forge/${mc}-${v}/forge-${mc}-${v}-installer.jar`,
+  // NeoForge's first release (1.20.1) still used Forge's artifact name
+  neoforge: (mc, v) => (mc === '1.20.1' ? `https://maven.neoforged.net/releases/net/neoforged/forge/1.20.1-${v}/forge-1.20.1-${v}-installer.jar`
+    : `https://maven.neoforged.net/releases/net/neoforged/neoforge/${v}/neoforge-${v}-installer.jar`),
+};
+// NeoForge numbers follow the game: 1.21.1 → 21.1.x, 1.21 → 21.0.x, 26.1 → 26.1.0.x, 26.1.1 → 26.1.1.x
+const neoPrefix = mc => { const p = mc.split('.'); return p[0] === '1' ? `${p[1]}.${p[2] || 0}.` : `${p[0]}.${p[1]}.${p[2] || 0}.`; };
+
 async function latestLoader(loader, mc) {
+  if (loader === 'forge') {
+    const { promos } = await getJson('https://files.minecraftforge.net/net/minecraftforge/forge/promotions_slim.json');
+    const v = promos[`${mc}-recommended`] || promos[`${mc}-latest`];
+    if (!v) throw new Error(I.t('err.loader_mc', { loader: 'Forge', mc }));
+    return v;
+  }
+  if (loader === 'neoforge') {
+    const { versions } = await getJson('https://maven.neoforged.net/api/maven/versions/releases/net/neoforged/neoforge');
+    const fit = versions.filter(v => v.startsWith(neoPrefix(mc)));
+    const v = fit.filter(v => !/beta|alpha/.test(v)).at(-1) || fit.at(-1);
+    if (!v) throw new Error(I.t('err.loader_mc', { loader: 'NeoForge', mc }));
+    return v;
+  }
   const list = await getJson(`${LOADER_META[loader]}/${encodeURIComponent(mc)}`);
   if (!list.length) throw new Error(I.t('err.loader_mc', { loader, mc }));
   return (list.find(x => x.loader.stable ?? !x.loader.version.includes('beta')) || list[0]).loader.version;
@@ -114,10 +138,62 @@ async function resolveVersion(mc, loader, loaderVersion) {
   await download(entry.url, file, { sha1: entry.sha1 });
   const v = JSON.parse(await fsp.readFile(file, 'utf8'));
   v.jar = v.id;
+  if (FORGE[loader]) {
+    const fdir = await forgeInstaller(loader, mc, loaderVersion);
+    return { ...merge(v, JSON.parse(await fsp.readFile(path.join(fdir, 'x', 'version.json'), 'utf8'))), forge: fdir };
+  }
   if (!LOADER_META[loader]) return v;
   const profile = await cachedJson(`${LOADER_META[loader]}/${mc}/${loaderVersion}/profile/json`,
     path.join(P.cache, loader, `${mc}-${loaderVersion}.json`));
   return merge(v, profile);
+}
+
+// download (checked against the maven's .sha1) and unpack the installer once per loader version
+async function forgeInstaller(loader, mc, ver) {
+  if (!/^[\w.+-]{1,40}$/.test(String(ver))) throw new Error(`invalid ${loader} version: ${ver}`);
+  const fdir = path.join(P.versions, `lumen-${loader}-${mc}-${ver}`), x = path.join(fdir, 'x');
+  if (fs.existsSync(path.join(x, 'version.json'))) return fdir;
+  const url = FORGE[loader](mc, ver), jar = path.join(fdir, 'installer.jar');
+  const r = await fetch(url + '.sha1', { headers: { 'User-Agent': UA } });
+  if (!r.ok) throw new Error(I.t('err.loader_mc', { loader, mc }) + ` (${ver})`);
+  await fsp.rm(fdir, { recursive: true, force: true });
+  await download(url, jar, { sha1: (await r.text()).trim().slice(0, 40) });
+  await fsp.mkdir(x, { recursive: true });
+  await execFileP(TAR, ['-xf', jar, '-C', x]);
+  const prof = JSON.parse(await fsp.readFile(path.join(x, 'install_profile.json'), 'utf8'));
+  if (prof.install || prof.versionInfo || !fs.existsSync(path.join(x, 'version.json'))) { // pre-1.13 installer format
+    await fsp.rm(fdir, { recursive: true, force: true });
+    throw new Error(I.t('err.forge_old'));
+  }
+  return fdir;
+}
+
+// the installer's processors: small Java tools that split, remap and binary-patch the vanilla client
+async function forgeProcess(v, java, onLog) {
+  const x = path.join(v.forge, 'x'), stamp = path.join(v.forge, 'processed');
+  if (fs.existsSync(stamp)) return;
+  const prof = JSON.parse(await fsp.readFile(path.join(x, 'install_profile.json'), 'utf8'));
+  if (fs.existsSync(path.join(x, 'maven'))) await fsp.cp(path.join(x, 'maven'), P.libs, { recursive: true, force: false });
+  const jobs = prof.libraries.flatMap(l => { const a = l.downloads?.artifact; return a?.url ? [{ url: a.url, dest: path.join(P.libs, a.path), sha1: a.sha1, size: a.size }] : []; });
+  await pool(jobs, 8, j => download(j.url, j.dest, j));
+  const lib = coords => path.join(P.libs, mavenPath(coords));
+  // [maven coords] → library file, /path → file from the installer, 'text' → literal
+  const literal = s => (s.startsWith('[') && s.endsWith(']') ? lib(s.slice(1, -1)) : s.startsWith('/') ? path.join(x, s) : s.startsWith("'") ? s.slice(1, -1) : s);
+  const vars = { SIDE: 'client', MINECRAFT_JAR: path.join(P.versions, v.jar, v.jar + '.jar'), MINECRAFT_VERSION: v.jar, ROOT, INSTALLER: path.join(v.forge, 'installer.jar'), LIBRARY_DIR: P.libs };
+  for (const [k, d] of Object.entries(prof.data || {})) vars[k] = literal(d.client);
+  const arg = s => (/^\{\w+\}$/.test(s) ? vars[s.slice(1, -1)] ?? s : literal(s.replace(/\{(\w+)\}/g, (m, k) => vars[k] ?? m)));
+  const sha1Of = f => crypto.createHash('sha1').update(fs.readFileSync(f)).digest('hex');
+  for (const p of prof.processors || []) {
+    if (p.sides && !p.sides.includes('client')) continue;
+    const outs = Object.entries(p.outputs || {}).map(([f, h]) => [arg(f), arg(h)]);
+    if (outs.length && outs.every(([f, h]) => fs.existsSync(f) && sha1Of(f) === h)) continue;
+    const jar = lib(p.jar);
+    const main = (await execFileP(TAR, ['-xOf', jar, 'META-INF/MANIFEST.MF'])).stdout.match(/^Main-Class:\s*(\S+)/m)?.[1];
+    onLog(I.t('log.forge_step', { step: p.jar.split(':')[1] }) + '\n');
+    try { await execFileP(java, ['-cp', [jar, ...(p.classpath || []).map(lib)].join(';'), main, ...p.args.map(arg)], { maxBuffer: 64 << 20, windowsHide: true }); }
+    catch (e) { throw new Error(`${I.t('err.forge_install', { step: p.jar })}\n${String(e.stderr || e.stdout || e.message).slice(-1500)}`); }
+  }
+  await fsp.writeFile(stamp, new Date().toISOString());
 }
 
 // ---------- install ----------
@@ -133,6 +209,8 @@ async function install(v, gameDir, onProgress) {
       const dest = path.join(P.libs, art.path || mavenPath(l.name));
       jobs.push({ url: art.url, dest, sha1: art.sha1, size: art.size });
       cp.push(dest);
+    } else if (art?.path) { // made by Forge's processors
+      cp.push(path.join(P.libs, art.path));
     } else if (!l.downloads) { // maven-style (Fabric/Quilt)
       const rel = mavenPath(l.name), dest = path.join(P.libs, rel);
       jobs.push({ url: (l.url || 'https://libraries.minecraft.net/').replace(/\/?$/, '/') + rel, dest, sha1: l.sha1, size: l.size });
@@ -237,9 +315,17 @@ async function launch(inst, settings, onLog, onProgress) {
   onLog(I.t('log.preparing', { mc: inst.mc, loader: inst.loader }) + '\n');
   const v = await resolveVersion(inst.mc, inst.loader, inst.loaderVersion);
   const { cp, nativesDir, virtualDir } = await install(v, gameDir, onProgress);
-  cp.push(path.join(P.versions, v.jar, v.jar + '.jar'));
   // instance values (instance settings dialog) win over the global ones
   const java = await findJava(v.javaVersion?.majorVersion || 8, inst.javaPath || settings.javaPath);
+  let gameJar = path.join(P.versions, v.jar, v.jar + '.jar');
+  if (v.forge) {
+    await forgeProcess(v, java, onLog);
+    // Forge's module layer skips the game jar by "${version_name}.jar", so it has to carry the loader version's name
+    const named = path.join(P.versions, v.id, v.id + '.jar');
+    if (!fs.existsSync(named)) { await fsp.mkdir(path.dirname(named), { recursive: true }); await fsp.copyFile(gameJar, named); }
+    gameJar = named;
+  }
+  cp.push(gameJar);
   const a = settings.auth; // Microsoft account from main.js, else offline name
   const name = a?.name || settings.username || 'Player';
   const vars = {
@@ -400,9 +486,8 @@ async function installPackFile(pack, meta, onProgress) {
     await execFileP(TAR, ['-xf', pack, '-C', x]); // bsdtar refuses ../ and absolute paths
     const idx = JSON.parse(await fsp.readFile(path.join(x, 'modrinth.index.json'), 'utf8'));
     const d = idx.dependencies;
-    const loader = d['fabric-loader'] ? 'fabric' : d['quilt-loader'] ? 'quilt' : d.forge || d.neoforge ? null : 'vanilla';
-    if (!loader) throw new Error(I.t('err.forge'));
-    inst = createInstance({ name: meta.name || String(idx.name || 'Modpack').slice(0, 40), mc: d.minecraft, loader, loaderVersion: d['fabric-loader'] || d['quilt-loader'],
+    const loader = d['fabric-loader'] ? 'fabric' : d['quilt-loader'] ? 'quilt' : d.neoforge ? 'neoforge' : d.forge ? 'forge' : 'vanilla';
+    inst = createInstance({ name: meta.name || String(idx.name || 'Modpack').slice(0, 40), mc: d.minecraft, loader, loaderVersion: d['fabric-loader'] || d['quilt-loader'] || d.neoforge || d.forge,
       icon: meta.icon || null, banner: meta.banner || null, modpack: meta.modpack || { version: String(idx.versionId || '1.0.0').slice(0, 40) } });
     const dir = instDir(inst.id);
     const files = idx.files.filter(f => f.env?.client !== 'unsupported');
@@ -464,7 +549,7 @@ async function exportMrpack(id, dest) {
     if (f && packHostAllowed(f.url)) files.push({ path: r, hashes: { sha1: f.hashes.sha1, sha512: f.hashes.sha512 }, downloads: [f.url], fileSize: f.size });
     else overrides.push(r);
   }
-  const loaderKey = { fabric: 'fabric-loader', quilt: 'quilt-loader' }[inst.loader];
+  const loaderKey = { fabric: 'fabric-loader', quilt: 'quilt-loader', forge: 'forge', neoforge: 'neoforge' }[inst.loader];
   const index = { formatVersion: 1, game: 'minecraft', versionId: inst.modpack?.version || '1.0.0', name: inst.name, files,
     dependencies: { minecraft: inst.mc, ...(loaderKey ? { [loaderKey]: inst.loaderVersion } : {}) } };
   const tmp = path.join(P.tmp, crypto.randomUUID());
@@ -487,7 +572,7 @@ const loadersFor = inst => (inst.loader === 'quilt' ? ['quilt', 'fabric'] : [ins
 const KINDS = {
   mod: { dir: 'mods', file: /\.jar(\.disabled)?$/i, type: 'mod', loaders: inst => (inst.loader === 'vanilla' ? null : loadersFor(inst)) },
   resourcepack: { dir: 'resourcepacks', file: /\.zip$/i, type: 'resourcepack', loaders: () => ['minecraft'] },
-  // shader packs run through Iris on Fabric/Quilt; vanilla's "core shaders" are resource packs, so no shader tab there
+  // shader packs run through Iris (Oculus on Forge); vanilla's "core shaders" are resource packs, so no shader tab there
   shader: { dir: 'shaderpacks', file: /\.zip$/i, type: 'shader', loaders: inst => (inst.loader === 'vanilla' ? null : ['iris']) },
 };
 // kind comes from the renderer: one of KINDS, and only where it fits the instance (no mods on vanilla)
@@ -499,7 +584,7 @@ function kindOf(inst, kind = 'mod') {
 const contentDir = (id, k) => path.join(instDir(id), k.dir);
 // updates are stable releases only, matching what installMod picks
 const updateFilter = (inst, k) => ({ loaders: k.loaders(inst), game_versions: [inst.mc], version_types: ['release'] });
-const IRIS = 'YL57xq9U';
+const IRIS = 'YL57xq9U', OCULUS = 'GchcoXML';
 
 async function postJson(url, body) {
   const r = await fetch(url, { method: 'POST', headers: { 'User-Agent': UA, 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
@@ -563,9 +648,10 @@ async function installMod(id, projectId, have = new Set(), kind = 'mod') {
   // dependencies of a pack are mods of the same instance
   for (const d of v.dependencies)
     if (d.dependency_type === 'required' && d.project_id) added.push(...await installMod(id, d.project_id, have, 'mod'));
-  // a shader does nothing on Fabric/Quilt without Iris (which brings Sodium along)
-  if (kind === 'shader' && inst.loader !== 'vanilla' && !(await listMods(id, 'mod')).some(m => m.projectId === IRIS))
-    added.push(...await installMod(id, IRIS, have, 'mod'));
+  // a shader pack does nothing without Iris (Oculus on Forge), which brings Sodium/Embeddium along
+  const shaderMod = inst.loader === 'forge' ? OCULUS : IRIS;
+  if (kind === 'shader' && !(await listMods(id, 'mod')).some(m => m.projectId === shaderMod))
+    added.push(...await installMod(id, shaderMod, have, 'mod'));
   return added;
 }
 
@@ -605,6 +691,9 @@ if (require.main === module) { // node launcher.js → self-check
   assert.deepEqual(kindOf(van, 'resourcepack').loaders(van), ['minecraft']);
   assert.deepEqual(kindOf(fab, 'shader').loaders(fab), ['iris']);
   assert.equal(kindOf(fab).dir, 'mods');
+  assert.equal(neoPrefix('1.21.1'), '21.1.'); assert.equal(neoPrefix('1.21'), '21.0.'); assert.equal(neoPrefix('26.1'), '26.1.0.'); assert.equal(neoPrefix('26.1.1'), '26.1.1.');
+  assert.match(FORGE.forge('1.20.1', '47.3.0'), /forge-1\.20\.1-47\.3\.0-installer\.jar$/);
+  assert.match(FORGE.neoforge('1.21.1', '21.1.201'), /neoforge\/21\.1\.201\/neoforge-21\.1\.201-installer\.jar$/);
   assert.throws(() => saveSettings({ ram: '4096; rm' }), /ram/);
   assert.throws(() => saveSettings({ javaPath: 'C:\\Windows\\System32\\cmd.exe' }), /java/i);
   assert.ok(packHostAllowed('https://cdn.modrinth.com/data/x.jar'));

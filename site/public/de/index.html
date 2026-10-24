@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Lumen · Minecraft-Launcher für Windows</title>
-  <meta name="description" content="Lumen ist ein kostenloser Minecraft-Launcher für Windows: Vanilla, Fabric und Quilt, Modpacks und Mods von Modrinth, fünf komplett verschiedene Layouts und Controller-Steuerung.">
+  <meta name="description" content="Lumen ist ein kostenloser Minecraft-Launcher für Windows: Vanilla, Fabric, Quilt, Forge und NeoForge, Modpacks, Mods und Shader von Modrinth, fünf komplett verschiedene Layouts und Controller-Steuerung.">
   <meta property="og:title" content="Lumen · Minecraft-Launcher für Windows">
   <meta property="og:description" content="Ein Minecraft-Launcher, der deine Instanzen wie einen Bildband, einen Konsolen-Homescreen oder einen Röhrenmonitor zeigt.">
   <meta property="og:image" content="https://lumenlauncher.app/img/de/layout-book.jpg">
@@ -41,7 +41,7 @@
       <div class="wrap">
         <h1>Ein Minecraft-Launcher, der nicht wie ein Formular aussieht.</h1>
         <div class="hero-side">
-          <p class="lede">Lumen installiert Vanilla, Fabric, Quilt, Modpacks und Mods wie andere Launcher auch. Nur zeigt er deine Instanzen nicht als Tabelle, sondern als Bildband, Konsolen-Homescreen, Bücherregal oder Röhrenmonitor. Mit Maus, Tastatur oder Controller.</p>
+          <p class="lede">Lumen installiert Vanilla, Fabric, Quilt, Forge, NeoForge, Modpacks und Mods wie andere Launcher auch. Nur zeigt er deine Instanzen nicht als Tabelle, sondern als Bildband, Konsolen-Homescreen, Bücherregal oder Röhrenmonitor. Mit Maus, Tastatur oder Controller.</p>
           <div class="cta">
             <a class="btn primary" href="/download/setup"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m-5-5 5 5 5-5M5 20h14"/></svg>Für Windows herunterladen</a>
             <a class="btn" href="#layouts">Die fünf Layouts</a>
@@ -65,10 +65,12 @@
     <section id="features">
       <div class="wrap">
         <div class="head"><h2>Was Lumen dir abnimmt</h2><p>Versionen, Loader, Bibliotheken, Assets und Java richtet Lumen selbst ein. Du suchst dir aus, was du spielen willst.</p></div>
-        <dl class="specs"><div><dt>Instanzen für jede Version</dt><dd>Vanilla, Fabric oder Quilt, von 1.8.9 bis zum neuesten Release, auf Wunsch mit Snapshots. Jede Instanz hat ihre eigenen Welten und Mods, eigenen Arbeitsspeicher, eigene Java-Argumente und ein eigenes Titelbild.</dd></div>
+        <dl class="specs"><div><dt>Instanzen für jede Version</dt><dd>Vanilla, Fabric, Quilt, Forge oder NeoForge, von 1.8.9 bis zum neuesten Release, auf Wunsch mit Snapshots. Jede Instanz hat ihre eigenen Welten und Mods, eigenen Arbeitsspeicher, eigene Java-Argumente, ein eigenes Titelbild und zählt ihre Spielzeit.</dd></div>
           <div><dt>Java von selbst</dt><dd>Lumen weiß, welche Java-Version eine Minecraft-Version braucht (8, 17, 21 oder 25), nimmt eine installierte oder lädt die passende von Eclipse Temurin.</dd></div>
           <div><dt>Modpacks von Modrinth</dt><dd>Pack aussuchen, Version wählen, installieren. Jede Datei wird per Prüfsumme kontrolliert, die Konfiguration des Packs übernimmt Lumen.</dd></div>
-          <div><dt>Mod-Browser pro Instanz</dt><dd>Mods suchen, installieren und entfernen, passend zu Version und Loader. Abhängigkeiten wie die Fabric API kommen automatisch mit.</dd></div>
+          <div><dt>Mods, Ressourcenpakete, Shader</dt><dd>Für jede Instanz suchen, installieren und entfernen, passend zu Version und Loader. Abhängigkeiten wie die Fabric API kommen automatisch mit, bei Shadern auch Iris.</dd></div>
+          <div><dt>Umzug aus anderen Launchern</dt><dd>Instanzen aus dem offiziellen Launcher, Prism, CurseForge, ATLauncher und der Modrinth App übernimmt Lumen mit Welten, Mods und Einstellungen. Der andere Launcher bleibt unverändert.</dd></div>
+          <div><dt>Weitergeben</dt><dd>Eine Instanz exportierst du als .mrpack für Freunde, .mrpack-Dateien importierst du mit einem Klick.</dd></div>
           <div><dt>Updates</dt><dd>Veraltete Mods aktualisierst du einzeln oder alle auf einmal, immer auf die neueste stabile Version. Lumen selbst hält sich auch aktuell.</dd></div>
           <div><dt>Controller</dt><dd>Blättern mit dem Steuerkreuz, Starten mit A, Zurück mit B. Steckst du einen Controller an, zeigt Lumen die passenden Tasten.</dd></div>
           <div><dt>Offline oder mit Microsoft</dt><dd>Offline mit einem Namen spielen geht sofort. Die Microsoft-Anmeldung ist eingebaut und funktioniert, sobald Mojang die App freigegeben hat. Den Zugang speichert Windows verschlüsselt.</dd></div></dl>
@@ -117,13 +119,13 @@
             <div class="head"><h2>Modpacks durchblättern</h2><p>Die Entdecken-Seite holt Modpacks live von Modrinth und zeigt sie im gewählten Layout, mit Galeriebild, Autor, Downloads und unterstützten Versionen.</p></div>
             <ul class="points"><li><b>Suche beim Tippen.</b> Ergebnisse erscheinen sofort, weiterblättern lädt nach.</li>
             <li><b>Installieren in einem Schritt.</b> Lumen legt die Instanz an, lädt alle Mods und übernimmt die Konfiguration des Packs.</li>
-            <li><b>Fabric und Quilt.</b> Packs für Forge und NeoForge sind markiert, die kann Lumen noch nicht installieren.</li></ul>
+            <li><b>Alle gängigen Loader.</b> Fabric, Quilt, Forge und NeoForge: Lumen richtet den Loader selbst ein.</li></ul>
           </div>
           <img class="shot" src="/img/de/discover-carousel.jpg" alt="Entdecken-Seite im Karussell-Layout mit einem Modpack im Vollbild" width="1440" height="900" loading="lazy">
         </div>
         <div class="split flip">
           <div>
-            <div class="head"><h2>Mods und Updates</h2><p>Jede Fabric- und Quilt-Instanz hat einen eigenen Mod-Browser. Installierte Mods erkennt Lumen am Fingerabdruck der Datei, auch die aus Modpacks.</p></div>
+            <div class="head"><h2>Mods und Updates</h2><p>Jede Instanz mit Mod-Loader hat einen eigenen Mod-Browser. Installierte Mods erkennt Lumen am Fingerabdruck der Datei, auch die aus Modpacks.</p></div>
             <ul class="points"><li><b>Abhängigkeiten kommen mit.</b> Installierst du Iris, kommt Sodium mit.</li>
             <li><b>Veraltete Mods auf einen Blick.</b> Alte und neue Version stehen direkt in der Liste, ein Klick aktualisiert alle.</li>
             <li><b>Nur stabile Versionen.</b> Updates springen nie auf eine Beta oder Alpha.</li></ul>
@@ -180,7 +182,8 @@
         <div class="faq"><details><summary>Kann ich auf normalen Online-Servern spielen?</summary><p>Dafür brauchst du die Microsoft-Anmeldung, die Lumen eingebaut hat. Sie funktioniert, sobald Mojang die App für die Minecraft-API freigegeben hat; beantragt ist das. Bis dahin spielst du offline: im Einzelspieler und auf Servern mit <code>online-mode=false</code>, etwa einem eigenen Server mit Freunden.</p></details>
           <details><summary>Brauche ich ein gekauftes Minecraft?</summary><p>Für die Microsoft-Anmeldung und offizielle Server ja, Lumen prüft, ob dein Konto Minecraft: Java Edition besitzt. Wenn du regelmäßig spielst, kauf das Spiel bitte.</p></details>
           <details><summary>Wie bekomme ich Updates?</summary><p>Die Installer-Version lädt neue Versionen im Hintergrund und installiert sie beim nächsten Start. Die ZIP-Version zeigt einen Hinweis mit Link zum Download.</p></details>
-          <details><summary>Werden Forge und NeoForge unterstützt?</summary><p>Noch nicht. Lumen kann Vanilla, Fabric und Quilt. Modpacks, die Forge oder NeoForge brauchen, sind auf der Entdecken-Seite markiert.</p></details>
+          <details><summary>Werden Forge und NeoForge unterstützt?</summary><p>Ja, seit Version 0.1.4: NeoForge und Forge ab Minecraft 1.13. Lumen lädt den Loader selbst und richtet ihn ein, auch für Modpacks.</p></details>
+          <details><summary>Kann ich aus einem anderen Launcher umziehen?</summary><p>Ja. Unter „Neue Instanz“ → „Aus anderem Launcher“ findet Lumen Instanzen aus dem offiziellen Launcher, Prism, CurseForge, ATLauncher und der Modrinth App und kopiert Welten, Mods, Pakete und Einstellungen. Der andere Launcher bleibt, wie er ist.</p></details>
           <details><summary>Muss ich Java installieren?</summary><p>Nein. Lumen sucht eine passende installierte Java-Version und lädt sonst die richtige von Eclipse Temurin.</p></details>
           <details><summary>Wo liegen meine Welten und Mods?</summary><p>In <code>%APPDATA%\.lumen</code>, jede Instanz in einem eigenen Ordner unter <code>instances</code>. Das Ordner-Symbol einer Instanz öffnet ihn direkt. Beim Deinstallieren bleiben die Daten erhalten.</p></details>
           <details><summary>Gibt es Lumen auf Englisch?</summary><p>Ja. Lumen spricht Deutsch und Englisch und folgt deiner Systemsprache, umstellen kannst du unter Einstellungen → Sprache.</p></details>

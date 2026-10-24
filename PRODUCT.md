@@ -12,7 +12,7 @@ Minecraft: Java Edition players on Windows who find Lumen through search, Reddit
 
 ## Product Purpose
 
-Lumen is a free, open-source (GPL-3.0) Minecraft launcher: instances for any version (vanilla, Fabric, Quilt), Modrinth modpacks in one click, a per-instance mod browser with updates, automatic Java, offline play or Microsoft sign-in. Success on the website: a visitor understands what is different, trusts it enough to download, and gets past SmartScreen.
+Lumen is a free, open-source (GPL-3.0) Minecraft launcher: instances for any version (vanilla, Fabric, Quilt, Forge 1.13+, NeoForge), Modrinth modpacks in one click, a per-instance browser for mods, resource packs and shaders with updates, import from other launchers, .mrpack export, automatic Java, offline play or Microsoft sign-in. Success on the website: a visitor understands what is different, trusts it enough to download, and gets past SmartScreen.
 
 ## Positioning
 
@@ -24,7 +24,7 @@ Visitors arrive on desktop mostly, some on phones (link shared in chats). German
 
 ## Capabilities and Constraints
 
-- Not supported: Forge, NeoForge, CurseForge and Technic modpacks.
+- Not supported: Forge before 1.13, CurseForge-only and Technic modpacks, data packs (per world).
 - Microsoft sign-in works only once Mojang approves the app for the Minecraft API (pending as of 2026-10).
 - Builds are not code-signed: SmartScreen warning on first start.
 - Site: static HTML built from `site/src/page.html` + `site/src/strings.js`, served by a Cloudflare Worker; self-hosted fonts, no trackers.
@@ -42,5 +42,5 @@ Real screenshots of the app in `site/public/img/de|en/` (layouts, colour schemes
 ## Product Principles
 
 1. Show the real app, never mockups or invented data.
-2. Be upfront about limits (no Forge, unsigned, sign-in pending).
+2. Be upfront about limits (unsigned, sign-in pending, what isn't supported).
 3. Privacy by default: nothing loads from third parties.
