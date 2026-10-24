@@ -32,7 +32,7 @@ module.exports = {
       ['Weitergeben', 'Eine Instanz exportierst du als .mrpack für Freunde, .mrpack-Dateien importierst du mit einem Klick.'],
       ['Updates', 'Veraltete Mods aktualisierst du einzeln oder alle auf einmal, immer auf die neueste stabile Version. Lumen selbst hält sich auch aktuell.'],
       ['Controller', 'Blättern mit dem Steuerkreuz, Starten mit A, Zurück mit B. Steckst du einen Controller an, zeigt Lumen die passenden Tasten.'],
-      ['Offline oder mit Microsoft', 'Offline mit einem Namen spielen geht sofort. Die Microsoft-Anmeldung ist eingebaut und funktioniert, sobald Mojang die App freigegeben hat. Den Zugang speichert Windows verschlüsselt.'],
+      ['Offline oder mit Microsoft', 'Melde dich mit deinem Microsoft-Konto an und spiel auf allen Online-Servern, oder spiel offline mit einem Namen. Den Zugang speichert Windows verschlüsselt, dein Passwort sieht Lumen nie.'],
     ]),
 
     lay_title: 'Fünf Layouts mit eigener Bildsprache',
@@ -89,7 +89,7 @@ module.exports = {
 
     faq_title: 'Fragen',
     faq_items: faq([
-      ['Kann ich auf normalen Online-Servern spielen?', 'Dafür brauchst du die Microsoft-Anmeldung, die Lumen eingebaut hat. Sie funktioniert, sobald Mojang die App für die Minecraft-API freigegeben hat; beantragt ist das. Bis dahin spielst du offline: im Einzelspieler und auf Servern mit <code>online-mode=false</code>, etwa einem eigenen Server mit Freunden.'],
+      ['Kann ich auf normalen Online-Servern spielen?', 'Ja. Melde dich unter Einstellungen → Microsoft-Konto an, die Anmeldung läuft im Browser direkt bei Microsoft. Ohne Anmeldung spielst du offline: im Einzelspieler und auf Servern mit <code>online-mode=false</code>.'],
       ['Brauche ich ein gekauftes Minecraft?', 'Für die Microsoft-Anmeldung und offizielle Server ja, Lumen prüft, ob dein Konto Minecraft: Java Edition besitzt. Wenn du regelmäßig spielst, kauf das Spiel bitte.'],
       ['Wie bekomme ich Updates?', 'Die Installer-Version lädt neue Versionen im Hintergrund und installiert sie beim nächsten Start. Die ZIP-Version zeigt einen Hinweis mit Link zum Download.'],
       ['Werden Forge und NeoForge unterstützt?', 'Ja, seit Version 0.1.4: NeoForge und Forge ab Minecraft 1.13. Lumen lädt den Loader selbst und richtet ihn ein, auch für Modpacks.'],
@@ -131,7 +131,7 @@ module.exports = {
       ['Sharing', 'Export an instance as a .mrpack for friends, and import .mrpack files in one click.'],
       ['Updates', 'Update outdated mods one by one or all at once, always to the newest stable version. Lumen keeps itself up to date too.'],
       ['Controller', 'Browse with the d-pad, launch with A, go back with B. Plug in a controller and Lumen shows the matching buttons.'],
-      ['Offline or with Microsoft', 'Playing offline with a name works right away. Microsoft sign-in is built in and works once Mojang has approved the app. Windows stores the login encrypted.'],
+      ['Offline or with Microsoft', 'Sign in with your Microsoft account and play on any online server, or play offline with a name. Windows stores the login encrypted, and Lumen never sees your password.'],
     ]),
 
     lay_title: 'Five layouts, each with its own look',
@@ -188,7 +188,7 @@ module.exports = {
 
     faq_title: 'Questions',
     faq_items: faq([
-      ['Can I play on regular online servers?', 'For that you need the Microsoft sign-in that Lumen has built in. It works once Mojang approves the app for the Minecraft API; that’s been applied for. Until then you play offline: in singleplayer and on servers with <code>online-mode=false</code>, such as your own server with friends.'],
+      ['Can I play on regular online servers?', 'Yes. Sign in under Settings → Microsoft account; the sign-in happens in your browser, directly with Microsoft. Without signing in you play offline: in singleplayer and on servers with <code>online-mode=false</code>.'],
       ['Do I need to own Minecraft?', 'For the Microsoft sign-in and official servers, yes: Lumen checks that your account owns Minecraft: Java Edition. If you play regularly, please buy the game.'],
       ['How do I get updates?', 'The installer version downloads new versions in the background and installs them the next time you start it. The ZIP version shows a notice with a download link.'],
       ['Are Forge and NeoForge supported?', 'Yes, since version 0.1.4: NeoForge, and Forge from Minecraft 1.13 on. Lumen downloads and sets up the loader itself, for modpacks too.'],

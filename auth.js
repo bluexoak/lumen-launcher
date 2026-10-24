@@ -1,6 +1,6 @@
 // Microsoft account → Minecraft token: device-code login, then Xbox Live → XSTS → Minecraft services.
 // Lumen's own Azure app (public client, no secret): the ID is public by design, every sign-in shows it to Microsoft anyway.
-// Mojang has to approve it for the Minecraft API; until then the Minecraft step of the login is refused.
+// It is approved for the Minecraft API; a fork with its own unapproved app gets auth.not_approved at the Minecraft step.
 const CLIENT_ID = '2ba9db56-f582-4cbd-89c9-3d72200548e7';
 const MS = 'https://login.microsoftonline.com/consumers/oauth2/v2.0';
 const SCOPE = 'XboxLive.signin offline_access';

@@ -48,7 +48,7 @@ Self-checks: `npm test` (launcher logic), `node auth.js` (Microsoft sign-in flow
 
 ## Microsoft sign-in
 
-Lumen uses the device-code flow with its own Azure app (public client, no secret; the client ID lives in `auth.js`). Microsoft only lets apps approved for the Minecraft API talk to the Minecraft services, so sign-in works once that approval is through.
+Lumen uses the device-code flow with its own Azure app (public client, no secret; the client ID lives in `auth.js`). The app is approved for the Minecraft API, so signing in and playing online works out of the box.
 
 Building your own fork? Register your own app in the [Microsoft Entra admin center](https://entra.microsoft.com) (account type **Personal Microsoft accounts only**, **Allow public client flows** on), apply for Minecraft API access (`aka.ms/mce-reviewappid`) and put its *Application (client) ID* into `CLIENT_ID` in `auth.js`.
 
