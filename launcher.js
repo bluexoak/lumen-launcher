@@ -410,12 +410,26 @@ async function installModpack(project, version, onProgress) {
   }
 }
 
-// ---------- per-instance mods ----------
-const modsDir = id => path.join(instDir(id), 'mods');
+// ---------- per-instance content: mods, resource packs, shader packs ----------
 const sha1File = f => fsp.readFile(f).then(b => crypto.createHash('sha1').update(b).digest('hex'));
 const loadersFor = inst => (inst.loader === 'quilt' ? ['quilt', 'fabric'] : [inst.loader]);
+// folder in the instance, file pattern, Modrinth project type and the Modrinth "loaders" that fit this instance
+const KINDS = {
+  mod: { dir: 'mods', file: /\.jar(\.disabled)?$/i, type: 'mod', loaders: inst => (inst.loader === 'vanilla' ? null : loadersFor(inst)) },
+  resourcepack: { dir: 'resourcepacks', file: /\.zip$/i, type: 'resourcepack', loaders: () => ['minecraft'] },
+  // shader packs run through Iris on Fabric/Quilt; vanilla's "core shaders" are resource packs, so no shader tab there
+  shader: { dir: 'shaderpacks', file: /\.zip$/i, type: 'shader', loaders: inst => (inst.loader === 'vanilla' ? null : ['iris']) },
+};
+// kind comes from the renderer: one of KINDS, and only where it fits the instance (no mods on vanilla)
+function kindOf(inst, kind = 'mod') {
+  const k = Object.hasOwn(KINDS, kind) && KINDS[kind];
+  if (!k || !k.loaders(inst)) throw new Error(`invalid content kind: ${kind}`);
+  return k;
+}
+const contentDir = (id, k) => path.join(instDir(id), k.dir);
 // updates are stable releases only, matching what installMod picks
-const updateFilter = inst => ({ loaders: loadersFor(inst), game_versions: [inst.mc], version_types: ['release'] });
+const updateFilter = (inst, k) => ({ loaders: k.loaders(inst), game_versions: [inst.mc], version_types: ['release'] });
+const IRIS = 'YL57xq9U';
 
 async function postJson(url, body) {
   const r = await fetch(url, { method: 'POST', headers: { 'User-Agent': UA, 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
@@ -423,70 +437,74 @@ async function postJson(url, body) {
   return r.json();
 }
 
-// installed jars, matched to Modrinth projects by hash (falls back to file names offline), plus available updates
-async function listMods(id) {
-  const inst = getInstance(id);
+// installed files, matched to Modrinth projects by hash (falls back to file names offline), plus available updates
+async function listMods(id, kind) {
+  const inst = getInstance(id), k = kindOf(inst, kind);
   let files = [];
-  try { files = (await fsp.readdir(modsDir(id))).filter(f => /\.jar(\.disabled)?$/i.test(f)); } catch {}
+  try { files = (await fsp.readdir(contentDir(id, k))).filter(f => k.file.test(f)); } catch {}
   const byHash = {};
-  for (const f of files) byHash[await sha1File(path.join(modsDir(id), f))] = f;
+  for (const f of files) byHash[await sha1File(path.join(contentDir(id, k), f))] = f;
   const hashes = Object.keys(byHash);
   let versions = {}, projects = {}, latest = {};
   if (files.length) try {
     [versions, latest] = await Promise.all([
       postJson(`${MR}/version_files`, { hashes, algorithm: 'sha1' }),
-      postJson(`${MR}/version_files/update`, { hashes, algorithm: 'sha1', ...updateFilter(inst) }),
+      postJson(`${MR}/version_files/update`, { hashes, algorithm: 'sha1', ...updateFilter(inst, k) }),
     ]);
     const ids = [...new Set(Object.values(versions).map(v => v.project_id))];
     if (ids.length) for (const p of await getJson(`${MR}/projects?ids=${encodeURIComponent(JSON.stringify(ids))}`)) projects[p.id] = p;
   } catch {}
   return Object.entries(byHash).map(([h, file]) => {
     const v = versions[h], p = v && projects[v.project_id], u = latest[h];
-    return { file, projectId: v?.project_id || null, title: p?.title || file.replace(/\.jar(\.disabled)?$/i, ''), icon: p?.icon_url || null,
+    return { file, projectId: v?.project_id || null, title: p?.title || file.replace(k.file, ''), icon: p?.icon_url || null,
       version: v?.version_number || null, update: v && u && u.date_published > v.date_published ? u.version_number : null };
   }).sort((a, b) => a.title.localeCompare(b.title));
 }
 
-// ponytail: swaps the jar only; new required dependencies of the update aren't pulled in
-async function updateMod(id, file) {
-  const inst = getInstance(id), old = modFile(id, file);
-  const v = await postJson(`${MR}/version_file/${await sha1File(old)}/update?algorithm=sha1`, updateFilter(inst));
+// ponytail: swaps the file only; new required dependencies of the update aren't pulled in
+async function updateMod(id, file, kind) {
+  const inst = getInstance(id), k = kindOf(inst, kind), old = modFile(id, file, k);
+  const v = await postJson(`${MR}/version_file/${await sha1File(old)}/update?algorithm=sha1`, updateFilter(inst, k));
   const f = v.files.find(f => f.primary) || v.files[0];
-  const dest = path.join(modsDir(id), path.basename(f.filename));
+  const dest = path.join(contentDir(id, k), path.basename(f.filename));
   if (dest === old) await fsp.rm(old); // same file name: download() would otherwise keep the old jar
   await download(f.url, dest, { sha1: f.hashes.sha1, size: f.size });
   if (dest !== old) await fsp.rm(old);
   return v.version_number;
 }
 
-function searchMods(id, q = '', offset = 0) {
-  const inst = getInstance(id);
-  const facets = [['project_type:mod'], loadersFor(inst).map(l => `categories:${l}`), [`versions:${inst.mc}`]];
+function searchMods(id, q = '', offset = 0, kind) {
+  const inst = getInstance(id), k = kindOf(inst, kind);
+  const facets = [[`project_type:${k.type}`], k.loaders(inst).map(l => `categories:${l}`), [`versions:${inst.mc}`]];
   return getJson(`${MR}/search?limit=30&offset=${offset}&index=${q ? 'relevance' : 'downloads'}&query=${encodeURIComponent(q)}&facets=${encodeURIComponent(JSON.stringify(facets))}`);
 }
 
 // newest compatible version + required dependencies; returns names of what got installed
-async function installMod(id, projectId, have = new Set()) {
+async function installMod(id, projectId, have = new Set(), kind = 'mod') {
   if (have.has(projectId)) return [];
   have.add(projectId);
-  const inst = getInstance(id);
-  const vs = await getJson(`${MR}/project/${encodeURIComponent(projectId)}/version?loaders=${encodeURIComponent(JSON.stringify(loadersFor(inst)))}&game_versions=${encodeURIComponent(JSON.stringify([inst.mc]))}`);
+  const inst = getInstance(id), k = kindOf(inst, kind);
+  const vs = await getJson(`${MR}/project/${encodeURIComponent(projectId)}/version?loaders=${encodeURIComponent(JSON.stringify(k.loaders(inst)))}&game_versions=${encodeURIComponent(JSON.stringify([inst.mc]))}`);
   const v = vs.find(v => v.version_type === 'release') || vs[0];
   if (!v) throw new Error(I.t('err.no_version', { mc: inst.mc, loader: inst.loader }));
   const f = v.files.find(f => f.primary) || v.files[0];
-  await download(f.url, path.join(modsDir(id), path.basename(f.filename)), { sha1: f.hashes.sha1, size: f.size });
+  await download(f.url, path.join(contentDir(id, k), path.basename(f.filename)), { sha1: f.hashes.sha1, size: f.size });
   const added = [v.name];
+  // dependencies of a pack are mods of the same instance
   for (const d of v.dependencies)
-    if (d.dependency_type === 'required' && d.project_id) added.push(...await installMod(id, d.project_id, have));
+    if (d.dependency_type === 'required' && d.project_id) added.push(...await installMod(id, d.project_id, have, 'mod'));
+  // a shader does nothing on Fabric/Quilt without Iris (which brings Sodium along)
+  if (kind === 'shader' && inst.loader !== 'vanilla' && !(await listMods(id, 'mod')).some(m => m.projectId === IRIS))
+    added.push(...await installMod(id, IRIS, have, 'mod'));
   return added;
 }
 
-// mod file names come from the renderer: a plain jar in that instance's mods folder, nothing else
-function modFile(id, file) {
-  if (file !== path.basename(file) || !/\.jar(\.disabled)?$/i.test(file)) throw new Error(`invalid mod file: ${file}`);
-  return path.join(modsDir(id), file);
+// file names come from the renderer: a plain file of that kind in its folder of the instance, nothing else
+function modFile(id, file, k = KINDS.mod) {
+  if (file !== path.basename(file) || !k.file.test(file)) throw new Error(`invalid mod file: ${file}`);
+  return path.join(contentDir(id, k), file);
 }
-const removeMod = (id, file) => fsp.rm(modFile(id, file));
+const removeMod = (id, file, kind) => fsp.rm(modFile(id, file, kindOf(getInstance(id), kind)));
 
 module.exports = { ROOT, instDir, listInstances, getInstance, saveInstance, createInstance, deleteInstance, updateInstance, setInstanceCover, clearInstanceCover, getSettings, saveSettings,
   mcVersions, latestLoader, launch, searchModpacks, modpackVersions, installModpack, listMods, searchMods, installMod, updateMod, removeMod };
@@ -510,6 +528,13 @@ if (require.main === module) { // node launcher.js → self-check
   for (const bad of ['..', '../..', '.', 'a/../..', 'A', '']) assert.throws(() => instDir(bad), /invalid instance id/);
   assert.ok(instDir('survival-0c5e').endsWith('survival-0c5e'));
   for (const bad of ['..', '../x.jar', 'x.exe', 'sub\\x.jar']) assert.throws(() => modFile('survival-0c5e', bad), /invalid mod file/);
+  for (const bad of ['x.jar', '..\\x.zip', 'x.zip.exe']) assert.throws(() => modFile('survival-0c5e', bad, KINDS.shader), /invalid mod file/);
+  assert.ok(modFile('survival-0c5e', 'BSL.zip', KINDS.shader).endsWith('shaderpacks\\BSL.zip'));
+  const van = { loader: 'vanilla', mc: '1.21.1' }, fab = { loader: 'fabric', mc: '1.21.1' };
+  for (const bad of ['mod', 'shader', '__proto__', 'constructor', 'x']) assert.throws(() => kindOf(van, bad), /invalid content kind/);
+  assert.deepEqual(kindOf(van, 'resourcepack').loaders(van), ['minecraft']);
+  assert.deepEqual(kindOf(fab, 'shader').loaders(fab), ['iris']);
+  assert.equal(kindOf(fab).dir, 'mods');
   assert.throws(() => saveSettings({ ram: '4096; rm' }), /ram/);
   assert.throws(() => saveSettings({ javaPath: 'C:\\Windows\\System32\\cmd.exe' }), /java/i);
   assert.ok(packHostAllowed('https://cdn.modrinth.com/data/x.jar'));

@@ -181,7 +181,7 @@ function instModel(i) {
       [t('inst.last_played'), i.lastPlayed ? ago(i.lastPlayed) : t('inst.never')]],
     short: `${i.mc} · ${LOADER[i.loader]}`,
     cta: `${playBtn(i, 'big')}
-      ${i.loader !== 'vanilla' ? `<button class="icon" data-act="mods" title="${t('inst.mods')}">${ICON.mods}</button>` : ''}
+      <button class="icon" data-act="mods" title="${t('inst.mods')}">${ICON.mods}</button>
       <button class="icon" data-act="logs" title="${t('inst.console')}">${ICON.term}</button>
       <button class="icon" data-act="folder" title="${t('inst.folder')}">${ICON.folder}</button>
       <button class="icon" data-act="settings" title="${t('inst.settings')}">${ICON.gear}</button>
@@ -307,7 +307,7 @@ function renderInstances(turnDir) {
       <div class="banner">${art(i)}<span class="tag">${LOADER[i.loader]}</span>${state.running.has(i.id) ? `<span class="tag live">${t('inst.running_tag')}</span>` : ''}</div>
       <div class="body"><h3 title="${esc(i.name)}">${esc(i.name)}</h3><p>${metaLine(i)}</p></div>
       <div class="actions">${playBtn(i)}
-        ${i.loader !== 'vanilla' ? `<button class="icon" data-act="mods" title="${t('inst.mods')}">${ICON.mods}</button>` : ''}
+        <button class="icon" data-act="mods" title="${t('inst.mods')}">${ICON.mods}</button>
         <button class="icon" data-act="logs" title="${t('inst.console')}">${ICON.term}</button>
         <button class="icon" data-act="folder" title="${t('inst.folder')}">${ICON.folder}</button>
         <button class="icon" data-act="settings" title="${t('inst.settings')}">${ICON.gear}</button>
@@ -579,8 +579,9 @@ instForm.onsubmit = async e => {
   } catch (err) { toast(errMsg(err), true); }
 };
 
-// ---------- per-instance mods ----------
-const mods = { id: null, installed: [], tab: 'installed', q: '', hits: [], busy: new Set(), timer: null };
+// ---------- per-instance content: mods, resource packs, shader packs ----------
+const mods = { id: null, kind: 'mod', installed: [], tab: 'installed', q: '', hits: [], busy: new Set(), timer: null };
+const kindsFor = inst => (inst.loader === 'vanilla' ? ['resourcepack'] : ['mod', 'resourcepack', 'shader']);
 const modRow = (icon, title, sub, action) => `<div class="mod-row">${icon ? `<img class="art" src="${esc(icon)}" alt="">` : '<span class="art"></span>'}
   <div class="mod-meta"><b>${esc(title)}</b><small>${esc(sub)}</small></div>${action}</div>`;
 const emptyBox = (h, p) => `<div class="empty"><div><h3>${h}</h3><p>${p}</p></div></div>`;
@@ -596,7 +597,7 @@ function renderMods() {
       + rows.map(m => modRow(m.icon, m.title, m.update ? `${m.version}  →  ${m.update}` : m.version || m.file,
       (m.update ? `<button class="btn sm upd" data-upd="${esc(m.file)}" ${mods.busy.size ? 'disabled' : ''}>${mods.busy.has(m.file) ? t('common.loading') : t('mods.update')}</button>` : '')
       + `<button class="btn ghost sm danger" data-rm="${esc(m.file)}">${t('mods.remove')}</button>`)).join('')
-      || emptyBox(q ? t('mods.no_hits') : t('mods.none'), q ? t('mods.other_term') : t('mods.none_text'));
+      || emptyBox(q ? t('mods.no_hits') : t('mods.none'), q ? t('mods.other_term') : t('mods.none_text', { kind: t('kind.' + mods.kind) }));
   } else {
     const have = new Set(mods.installed.map(m => m.projectId));
     list.innerHTML = mods.hits.map(p => modRow(p.icon_url, p.title, `${p.author} · ${compact(p.downloads)} · ${p.description}`,
@@ -607,13 +608,13 @@ function renderMods() {
 }
 
 async function refreshInstalled() {
-  try { mods.installed = await api.invoke('mods', mods.id); } catch (e) { toast(errMsg(e), true); }
+  try { mods.installed = await api.invoke('mods', mods.id, mods.kind); } catch (e) { toast(errMsg(e), true); }
   renderMods();
 }
 
 async function searchMods() {
   $('#mod-list').innerHTML = '<div class="row-skel"></div>'.repeat(6);
-  try { mods.hits = (await api.invoke('search-mods', mods.id, mods.q)).hits; } catch (e) { mods.hits = []; toast(errMsg(e), true); }
+  try { mods.hits = (await api.invoke('search-mods', mods.id, mods.q, 0, mods.kind)).hits; } catch (e) { mods.hits = []; toast(errMsg(e), true); }
   if (mods.tab === 'add') renderMods();
 }
 
@@ -625,16 +626,32 @@ function setModTab(tab) {
   tab === 'add' ? searchMods() : renderMods();
 }
 
+// packs aren't switched on by installing them: say where that happens in the game
+async function setModKind(kind) {
+  Object.assign(mods, { kind, installed: [], hits: [] });
+  $(`#mods-kinds input[value="${kind}"]`).checked = true;
+  const hint = { resourcepack: 'mods.hint_rp', shader: 'mods.hint_shader' }[kind];
+  $('#mods-hint').hidden = !hint;
+  $('#mods-hint').textContent = hint ? t(hint) : '';
+  $('#mod-list').innerHTML = '<div class="row-skel"></div>'.repeat(4);
+  setModTab(mods.tab);
+  await refreshInstalled();
+}
+
 async function openMods(id) {
   const inst = state.instances.find(i => i.id === id);
-  Object.assign(mods, { id, installed: [], q: '', hits: [] });
+  const kinds = kindsFor(inst);
+  Object.assign(mods, { id, q: '', tab: 'installed' });
   $('#mods-search').value = '';
   $('#mods-title').textContent = inst.name;
   $('#mods-sub').textContent = `Minecraft ${inst.mc} · ${LOADER[inst.loader]}`;
-  $('#mod-list').innerHTML = '<div class="row-skel"></div>'.repeat(4);
+  const seg = $('#mods-kinds');
+  seg.hidden = kinds.length < 2;
+  seg.style.setProperty('--n', kinds.length);
+  seg.innerHTML = kinds.map(k => `<label><input type="radio" name="mkind" value="${k}"><span>${t('kind.' + k)}</span></label>`).join('');
+  seg.querySelectorAll('input').forEach(r => (r.onchange = () => setModKind(r.value)));
   $('#mods-dlg').showModal();
-  setModTab('installed');
-  await refreshInstalled();
+  await setModKind(kinds[0]);
 }
 
 $$('#mods-dlg input[name=mtab]').forEach(r => (r.onchange = () => setModTab(r.value)));
@@ -654,7 +671,7 @@ $('#mod-list').onclick = async e => {
     renderMods();
     let ok = 0;
     for (const f of upd) {
-      try { await api.invoke('update-mod', mods.id, f); ok++; } catch (err) { toast(`${f}: ${errMsg(err)}`, true); }
+      try { await api.invoke('update-mod', mods.id, f, mods.kind); ok++; } catch (err) { toast(`${f}: ${errMsg(err)}`, true); }
       mods.busy.delete(f);
     }
     if (ok) toast(t(ok === 1 ? 'mods.updated1' : 'mods.updated', { n: ok }));
@@ -662,7 +679,7 @@ $('#mod-list').onclick = async e => {
   }
   if (rm) {
     if (!confirm(t('mods.confirm_remove', { file: rm.dataset.rm }))) return;
-    try { await api.invoke('remove-mod', mods.id, rm.dataset.rm); } catch (err) { toast(errMsg(err), true); }
+    try { await api.invoke('remove-mod', mods.id, rm.dataset.rm, mods.kind); } catch (err) { toast(errMsg(err), true); }
     await refreshInstalled();
   }
   if (add) {
@@ -670,8 +687,9 @@ $('#mod-list').onclick = async e => {
     mods.busy.add(pid);
     renderMods();
     try {
-      const added = await api.invoke('install-mod', mods.id, pid, mods.installed.map(m => m.projectId).filter(Boolean));
-      toast(added.length > 1 ? t('mods.added_deps', { name: added[0], n: added.length - 1 }) : t('mods.added', { name: added[0] }));
+      const added = await api.invoke('install-mod', mods.id, pid, mods.kind === 'mod' ? mods.installed.map(m => m.projectId).filter(Boolean) : [], mods.kind);
+      const name = mods.hits.find(h => h.project_id === pid)?.title || added[0]; // version names are often just "r5.9.3"
+      toast(added.length > 1 ? t('mods.added_deps', { name, n: added.length - 1 }) : t('mods.added', { name }));
     } catch (err) { toast(errMsg(err), true); }
     mods.busy.delete(pid);
     await refreshInstalled();

@@ -90,7 +90,7 @@ handle('pack-versions', L.modpackVersions);
 handle('install-pack', (project, version) => L.installModpack(project, version, (d, t) => send('progress', 'pack', d, t)));
 handle('mods', L.listMods);
 handle('search-mods', L.searchMods);
-handle('install-mod', (id, projectId, have) => L.installMod(id, projectId, new Set(have)));
+handle('install-mod', (id, projectId, have, kind) => L.installMod(id, projectId, new Set(Array.isArray(have) ? have : []), kind));
 handle('remove-mod', L.removeMod);
 handle('update-mod', L.updateMod);
 handle('kill',id => running.get(id)?.kill());
