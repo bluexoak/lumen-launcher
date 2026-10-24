@@ -4,6 +4,7 @@ const fs = require('fs');
 const L = require('./launcher');
 const A = require('./auth');
 const I = require('./i18n');
+const IMP = require('./importers');
 
 let win;
 const running = new Map();
@@ -82,6 +83,23 @@ handle('export-pack', async id => {
   const r = await dialog.showSaveDialog(win, { defaultPath: `${L.getInstance(id).name.replace(/[<>:"/\\|?*]/g, '_')}.mrpack`, filters: [{ name: 'Modrinth Modpack', extensions: ['mrpack'] }] });
   if (r.canceled || !r.filePath) return null;
   return { file: path.basename(r.filePath), ...(await L.exportMrpack(id, r.filePath)) };
+});
+// other launchers: the main process keeps what it found and the page only ever names an entry by its index
+let imports = [];
+const impView = (f, key) => ({ key, source: f.source, name: f.name, mc: f.mc, loader: f.loader, loaderVersion: f.loaderVersion });
+handle('scan-imports', async () => (imports = await IMP.scan()).map(impView));
+handle('pick-import', async () => {
+  const r = await dialog.showOpenDialog(win, { properties: ['openDirectory'] });
+  if (r.canceled || !r.filePaths[0]) return null;
+  const f = IMP.readFolder(r.filePaths[0]);
+  if (!f) throw new Error(I.t('err.import_unknown'));
+  imports.push(f);
+  return impView(f, imports.length - 1);
+});
+handle('run-import', key => {
+  const f = Number.isInteger(key) && imports[key];
+  if (!f) throw new Error('unknown import');
+  return IMP.importInstance(f);
 });
 handle('import-pack', async () => {
   const r = await dialog.showOpenDialog(win, { properties: ['openFile'], filters: [{ name: 'Modrinth Modpack', extensions: ['mrpack'] }] });

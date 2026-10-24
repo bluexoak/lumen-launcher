@@ -25,6 +25,7 @@
       "preload.js",
       "launcher.js",
       "auth.js",
+      "importers.js",
       "i18n.js",
       "app.js",
       "layouts.js",

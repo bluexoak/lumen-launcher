@@ -94,6 +94,7 @@
   <dialog id="new-dlg">
     <form method="dialog" id="new-form">
       <h2 data-i18n="new.title"></h2>
+      <div class="import-row"><span data-i18n="new.or"></span><button type="button" class="btn ghost sm" id="import-launcher" data-i18n="new.from_launcher"></button><button type="button" class="btn ghost sm" id="import-pack" data-i18n="new.import"></button></div>
       <label class="field"><span data-i18n="new.name"></span><input name="name" data-i18n-ph="new.name_ph" maxlength="40"></label>
       <label class="field"><span data-i18n="new.version"></span><select name="mc" id="mc-select"></select></label>
       <label class="check"><input type="checkbox" id="snapshots"> <span data-i18n="new.snapshots"></span></label>
@@ -104,11 +105,12 @@
           <label><input type="radio" name="loader" value="quilt"><span>Quilt</span></label>
         </div>
       </div>
-      <div class="row end"><button type="button" class="btn ghost push-left" id="import-pack" data-i18n="new.import"></button><button class="btn ghost" value="cancel" formnovalidate data-i18n="common.cancel"></button><button class="btn primary" value="ok" data-i18n="new.create"></button></div>
+      <div class="row end"><button class="btn ghost" value="cancel" formnovalidate data-i18n="common.cancel"></button><button class="btn primary" value="ok" data-i18n="new.create"></button></div>
     </form>
   </dialog>
 
   <dialog id="pack-dlg"></dialog>
+  <dialog id="imp-dlg"></dialog>
 
   <dialog id="inst-dlg">
     <form method="dialog" id="inst-form">

@@ -13,7 +13,7 @@ const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': 
 const errMsg = e => String(e?.message || e).replace(/^Error invoking remote method '[^']+': (Error: )?/, '');
 const hue = s => [...s].reduce((h, c) => Math.imul(h ^ c.charCodeAt(0), 16777619) >>> 0, 2166136261) % 360; // FNV-1a
 const compact = n => new Intl.NumberFormat(I18N.lang, { notation: 'compact' }).format(n);
-const LOADER = { vanilla: 'Vanilla', fabric: 'Fabric', quilt: 'Quilt' };
+const LOADER = { vanilla: 'Vanilla', fabric: 'Fabric', quilt: 'Quilt', forge: 'Forge', neoforge: 'NeoForge' };
 const ICON = {
   play: '<svg viewBox="0 0 24 24"><path d="M7 4.5v15l13-7.5z"/></svg>',
   stop: '<svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>',
@@ -407,6 +407,35 @@ async function openNew() {
   fillVersions();
 }
 $('#new-btn').onclick = openNew;
+// ---------- import from other launchers ----------
+async function openImports() {
+  const dlg = $('#imp-dlg');
+  dlg.innerHTML = `<div class="dlg"><h2>${t('imp.title')}</h2><p class="dlg-body">${t('imp.text')}</p>
+    <div class="imp-list" id="imp-list"><div class="row-skel"></div><div class="row-skel"></div><div class="row-skel"></div></div>
+    <div class="row end"><button class="btn ghost push-left" id="imp-pick">${t('imp.pick')}</button><button class="btn ghost" id="imp-close">${t('common.close')}</button></div></div>`;
+  dlg.showModal();
+  let list = [];
+  const ok = f => f.loader !== 'other';
+  const paint = () => ($('#imp-list').innerHTML = list.map(f => `<div class="imp-row"><div><b title="${esc(f.name)}">${esc(f.name)}</b>
+      <small><span class="src">${esc(f.source)}</span>Minecraft ${esc(f.mc)} · ${ok(f) ? LOADER[f.loader] + (f.loaderVersion ? ' ' + esc(f.loaderVersion) : '') : t('imp.unsupported')}</small></div>
+      ${f.done ? `<span class="done">${t('imp.taken')}</span>` : `<button class="btn primary sm" data-imp="${f.key}" ${ok(f) && !f.busy ? '' : 'disabled'}>${f.busy ? t('common.loading') : t('imp.take')}</button>`}</div>`).join('')
+    || `<p class="dlg-body">${t('imp.none')}</p>`);
+  $('#imp-close').onclick = () => dlg.close();
+  $('#imp-pick').onclick = async () => {
+    try { const f = await api.invoke('pick-import'); if (f) { list.unshift(f); paint(); } } catch (e) { toast(errMsg(e), true); }
+  };
+  $('#imp-list').onclick = async e => {
+    const b = e.target.closest('[data-imp]'), f = b && list.find(x => x.key === +b.dataset.imp);
+    if (!f) return;
+    f.busy = true; paint();
+    try { await api.invoke('run-import', f.key); f.done = true; toast(t('imp.done', { name: f.name })); await loadInstances(); }
+    catch (err) { toast(errMsg(err), true); }
+    f.busy = false; paint();
+  };
+  try { list = await api.invoke('scan-imports'); } catch (e) { toast(errMsg(e), true); }
+  paint();
+}
+$('#import-launcher').onclick = () => { $('#new-dlg').close(); openImports(); };
 $('#import-pack').onclick = async () => {
   $('#new-dlg').close();
   try {

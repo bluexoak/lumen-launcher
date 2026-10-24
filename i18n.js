@@ -25,7 +25,10 @@
       'common.save': 'Speichern', 'inst.playtime': 'Spielzeit', 'time.min': '{m} min', 'time.h': '{h} h {m} min', 'inst.copy_name': '{name} (Kopie)',
       'is.tools': 'Instanz', 'is.duplicate': 'Duplizieren', 'is.export': 'Als Modpack exportieren (.mrpack)', 'is.export_hint': 'Exportiert Mods, Ressourcenpakete, Shader und Einstellungen, zum Weitergeben an Freunde. Welten bleiben draußen.',
       'is.duplicated': 'Kopie angelegt: {name}', 'is.exported': '{file} gespeichert: {linked} Dateien als Modrinth-Link, {bundled} direkt im Paket.',
-      'new.import': 'Modpack-Datei importieren…', 'new.importing': 'Modpack wird importiert…', 'new.imported': 'Importiert: {name}', 'err.mrpack': 'Das ist keine .mrpack-Datei.', 'upd.ready': 'Lumen {v} ist heruntergeladen und wird beim nächsten Start installiert.', 'upd.restart': 'Jetzt neu starten', 'upd.available': 'Lumen {v} ist verfügbar.', 'upd.download': 'Herunterladen',
+      'new.import': '.mrpack-Datei', 'new.or': 'Oder übernehmen:', 'new.from_launcher': 'Aus anderem Launcher',
+      'imp.official': 'Offizieller Launcher', 'imp.title': 'Aus anderem Launcher übernehmen', 'imp.text': 'Lumen kopiert Welten, Mods, Pakete und Einstellungen. Der andere Launcher bleibt unverändert.',
+      'imp.none': 'Keine Instanzen gefunden. Liegt deine woanders, wähle den Ordner selbst.', 'imp.pick': 'Ordner wählen…', 'imp.take': 'Übernehmen', 'imp.taken': '✓ Übernommen', 'imp.done': 'Übernommen: {name}',
+      'imp.unsupported': 'Loader wird nicht unterstützt', 'err.import_loader': 'Diesen Loader unterstützt Lumen nicht.', 'err.import_unknown': 'In diesem Ordner hat Lumen keine Instanz erkannt (Prism, MultiMC, CurseForge oder ATLauncher).', 'new.importing': 'Modpack wird importiert…', 'new.imported': 'Importiert: {name}', 'err.mrpack': 'Das ist keine .mrpack-Datei.', 'upd.ready': 'Lumen {v} ist heruntergeladen und wird beim nächsten Start installiert.', 'upd.restart': 'Jetzt neu starten', 'upd.available': 'Lumen {v} ist verfügbar.', 'upd.download': 'Herunterladen',
 
       'view.layout': 'Layout-Ansicht (G)', 'view.grid': 'Raster (G)',
       'hint.browse': 'Blättern', 'hint.grid': 'Raster', 'hint.install': 'Installieren',
@@ -121,7 +124,10 @@
       'common.save': 'Save', 'inst.playtime': 'Playtime', 'time.min': '{m} min', 'time.h': '{h} h {m} min', 'inst.copy_name': '{name} (copy)',
       'is.tools': 'Instance', 'is.duplicate': 'Duplicate', 'is.export': 'Export as modpack (.mrpack)', 'is.export_hint': 'Exports mods, resource packs, shaders and settings, to share with friends. Worlds stay out.',
       'is.duplicated': 'Copy created: {name}', 'is.exported': '{file} saved: {linked} files as Modrinth links, {bundled} bundled in the pack.',
-      'new.import': 'Import modpack file…', 'new.importing': 'Importing modpack…', 'new.imported': 'Imported: {name}', 'err.mrpack': 'That isn’t a .mrpack file.', 'upd.ready': 'Lumen {v} has been downloaded and installs the next time you start it.', 'upd.restart': 'Restart now', 'upd.available': 'Lumen {v} is available.', 'upd.download': 'Download',
+      'new.import': '.mrpack file', 'new.or': 'Or bring one over:', 'new.from_launcher': 'From another launcher',
+      'imp.official': 'Official launcher', 'imp.title': 'Bring over from another launcher', 'imp.text': 'Lumen copies worlds, mods, packs and settings. The other launcher stays as it is.',
+      'imp.none': 'No instances found. If yours live somewhere else, pick the folder yourself.', 'imp.pick': 'Pick folder…', 'imp.take': 'Bring over', 'imp.taken': '✓ Brought over', 'imp.done': 'Brought over: {name}',
+      'imp.unsupported': 'Loader not supported', 'err.import_loader': 'Lumen doesn’t support this loader.', 'err.import_unknown': 'Lumen didn’t recognise an instance in this folder (Prism, MultiMC, CurseForge or ATLauncher).', 'new.importing': 'Importing modpack…', 'new.imported': 'Imported: {name}', 'err.mrpack': 'That isn’t a .mrpack file.', 'upd.ready': 'Lumen {v} has been downloaded and installs the next time you start it.', 'upd.restart': 'Restart now', 'upd.available': 'Lumen {v} is available.', 'upd.download': 'Download',
 
       'view.layout': 'Layout view (G)', 'view.grid': 'Grid (G)',
       'hint.browse': 'Browse', 'hint.grid': 'Grid', 'hint.install': 'Install',
