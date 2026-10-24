@@ -76,6 +76,18 @@ handle('instance-cover', async id => {
   return true;
 });
 handle('instance-cover-clear', id => L.clearInstanceCover(id));
+handle('duplicate', id => L.duplicateInstance(id));
+// export target and import source come from the OS file dialogs, never from the page
+handle('export-pack', async id => {
+  const r = await dialog.showSaveDialog(win, { defaultPath: `${L.getInstance(id).name.replace(/[<>:"/\\|?*]/g, '_')}.mrpack`, filters: [{ name: 'Modrinth Modpack', extensions: ['mrpack'] }] });
+  if (r.canceled || !r.filePath) return null;
+  return { file: path.basename(r.filePath), ...(await L.exportMrpack(id, r.filePath)) };
+});
+handle('import-pack', async () => {
+  const r = await dialog.showOpenDialog(win, { properties: ['openFile'], filters: [{ name: 'Modrinth Modpack', extensions: ['mrpack'] }] });
+  if (r.canceled || !r.filePaths[0]) return null;
+  return L.importMrpack(r.filePaths[0], (d, t) => send('progress', 'pack', d, t));
+});
 // window buttons take the colour of whatever the page shows behind them
 handle('titlebar', (color, symbolColor) => {
   const hex = /^#[0-9a-f]{6}$/i;
@@ -142,5 +154,6 @@ handle('launch', async id => {
   L.saveInstance({ ...inst, lastPlayed: Date.now() });
   running.set(id, child);
   send('state', id, 'running');
-  child.on('exit', code => { running.delete(id); send('state', id, 'stopped', code); });
+  const started = Date.now();
+  child.on('exit', code => { running.delete(id); L.addPlaytime(id, Date.now() - started); send('state', id, 'stopped', code); });
 });

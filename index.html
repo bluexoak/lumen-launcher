@@ -104,7 +104,7 @@
           <label><input type="radio" name="loader" value="quilt"><span>Quilt</span></label>
         </div>
       </div>
-      <div class="row end"><button class="btn ghost" value="cancel" formnovalidate data-i18n="common.cancel"></button><button class="btn primary" value="ok" data-i18n="new.create"></button></div>
+      <div class="row end"><button type="button" class="btn ghost push-left" id="import-pack" data-i18n="new.import"></button><button class="btn ghost" value="cancel" formnovalidate data-i18n="common.cancel"></button><button class="btn primary" value="ok" data-i18n="new.create"></button></div>
     </form>
   </dialog>
 
@@ -125,6 +125,9 @@
         <small id="inst-ram-default"></small></div>
       <label class="field"><span><span data-i18n="is.java"></span> <em data-i18n="set.java_em"></em></span><input name="javaPath" data-i18n-ph="is.java_ph" spellcheck="false"></label>
       <label class="field"><span><span data-i18n="is.args"></span> <em data-i18n="set.java_em"></em></span><input name="jvmArgs" data-i18n-ph="is.args_ph" spellcheck="false"><small data-i18n="is.args_hint"></small></label>
+      <div class="field"><span data-i18n="is.tools"></span>
+        <div class="row"><button type="button" class="btn sm" id="inst-duplicate" data-i18n="is.duplicate"></button><button type="button" class="btn sm" id="inst-export" data-i18n="is.export"></button></div>
+        <small data-i18n="is.export_hint"></small></div>
       <div class="row end"><button class="btn ghost" value="cancel" formnovalidate data-i18n="common.cancel"></button><button class="btn primary" value="ok" data-i18n="common.save"></button></div>
     </form>
   </dialog>

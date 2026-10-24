@@ -22,7 +22,10 @@
       'is.args_hint': 'Nur für Fortgeschrittene. Werden vor dem Start an Java übergeben.',
       'is.cover': 'Titelbild', 'is.cover_hint': 'Erscheint im Buch, im Karussell, in der Liste und als Buchumschlag im Regal. PNG, JPG oder WebP, bis 15 MB.',
       'is.cover_pick': 'Bild wählen…', 'is.cover_reset': 'Zurücksetzen', 'is.cover_none': 'Kein eigenes Bild', 'is.saved': 'Einstellungen gespeichert.',
-      'common.save': 'Speichern', 'upd.ready': 'Lumen {v} ist heruntergeladen und wird beim nächsten Start installiert.', 'upd.restart': 'Jetzt neu starten', 'upd.available': 'Lumen {v} ist verfügbar.', 'upd.download': 'Herunterladen',
+      'common.save': 'Speichern', 'inst.playtime': 'Spielzeit', 'time.min': '{m} min', 'time.h': '{h} h {m} min', 'inst.copy_name': '{name} (Kopie)',
+      'is.tools': 'Instanz', 'is.duplicate': 'Duplizieren', 'is.export': 'Als Modpack exportieren (.mrpack)', 'is.export_hint': 'Exportiert Mods, Ressourcenpakete, Shader und Einstellungen, zum Weitergeben an Freunde. Welten bleiben draußen.',
+      'is.duplicated': 'Kopie angelegt: {name}', 'is.exported': '{file} gespeichert: {linked} Dateien als Modrinth-Link, {bundled} direkt im Paket.',
+      'new.import': 'Modpack-Datei importieren…', 'new.importing': 'Modpack wird importiert…', 'new.imported': 'Importiert: {name}', 'err.mrpack': 'Das ist keine .mrpack-Datei.', 'upd.ready': 'Lumen {v} ist heruntergeladen und wird beim nächsten Start installiert.', 'upd.restart': 'Jetzt neu starten', 'upd.available': 'Lumen {v} ist verfügbar.', 'upd.download': 'Herunterladen',
 
       'view.layout': 'Layout-Ansicht (G)', 'view.grid': 'Raster (G)',
       'hint.browse': 'Blättern', 'hint.grid': 'Raster', 'hint.install': 'Installieren',
@@ -115,7 +118,10 @@
       'is.args_hint': 'Advanced. Passed to Java at launch.',
       'is.cover': 'Cover image', 'is.cover_hint': 'Shown in the book, the carousel, the list and as the book cover on the shelf. PNG, JPG or WebP, up to 15 MB.',
       'is.cover_pick': 'Choose image…', 'is.cover_reset': 'Reset', 'is.cover_none': 'No custom image', 'is.saved': 'Settings saved.',
-      'common.save': 'Save', 'upd.ready': 'Lumen {v} has been downloaded and installs the next time you start it.', 'upd.restart': 'Restart now', 'upd.available': 'Lumen {v} is available.', 'upd.download': 'Download',
+      'common.save': 'Save', 'inst.playtime': 'Playtime', 'time.min': '{m} min', 'time.h': '{h} h {m} min', 'inst.copy_name': '{name} (copy)',
+      'is.tools': 'Instance', 'is.duplicate': 'Duplicate', 'is.export': 'Export as modpack (.mrpack)', 'is.export_hint': 'Exports mods, resource packs, shaders and settings, to share with friends. Worlds stay out.',
+      'is.duplicated': 'Copy created: {name}', 'is.exported': '{file} saved: {linked} files as Modrinth links, {bundled} bundled in the pack.',
+      'new.import': 'Import modpack file…', 'new.importing': 'Importing modpack…', 'new.imported': 'Imported: {name}', 'err.mrpack': 'That isn’t a .mrpack file.', 'upd.ready': 'Lumen {v} has been downloaded and installs the next time you start it.', 'upd.restart': 'Restart now', 'upd.available': 'Lumen {v} is available.', 'upd.download': 'Download',
 
       'view.layout': 'Layout view (G)', 'view.grid': 'Grid (G)',
       'hint.browse': 'Browse', 'hint.grid': 'Grid', 'hint.install': 'Install',

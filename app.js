@@ -59,6 +59,7 @@ $$('nav button').forEach(b => (b.onclick = () => show(b.dataset.view)));
 
 // ---------- library ----------
 const art = i => (i.icon ? `<img class="art" src="${esc(i.icon)}" alt="">` : `<span class="art glyph">${esc((i.name[0] || '?').toUpperCase())}</span>`);
+const playtime = ms => { const m = Math.round(ms / 60e3); return m < 60 ? t('time.min', { m }) : t('time.h', { h: Math.floor(m / 60), m: m % 60 }); };
 const metaLine = i => `${esc(i.mc)} · ${LOADER[i.loader]}${i.modpack ? ' · Modpack ' + esc(i.modpack.version) : ''}`;
 function playBtn(i, cls = '') {
   const run = state.running.has(i.id), busy = state.busy.has(i.id);
@@ -178,7 +179,7 @@ function instModel(i) {
     lede: null,
     specs: [['Minecraft', i.mc], ['Loader', LOADER[i.loader] + (i.loaderVersion ? ' ' + i.loaderVersion : '')],
       ...(i.loader !== 'vanilla' ? [['Mods', String(i.modCount ?? 0)]] : []), ...(i.modpack ? [['Modpack', i.modpack.version]] : []),
-      [t('inst.last_played'), i.lastPlayed ? ago(i.lastPlayed) : t('inst.never')]],
+      [t('inst.last_played'), i.lastPlayed ? ago(i.lastPlayed) : t('inst.never')], ...(i.playtime >= 60e3 ? [[t('inst.playtime'), playtime(i.playtime)]] : [])],
     short: `${i.mc} · ${LOADER[i.loader]}`,
     cta: `${playBtn(i, 'big')}
       <button class="icon" data-act="mods" title="${t('inst.mods')}">${ICON.mods}</button>
@@ -406,6 +407,14 @@ async function openNew() {
   fillVersions();
 }
 $('#new-btn').onclick = openNew;
+$('#import-pack').onclick = async () => {
+  $('#new-dlg').close();
+  try {
+    toast(t('new.importing'));
+    const inst = await api.invoke('import-pack');
+    if (inst) { toast(t('new.imported', { name: inst.name })); await loadInstances(); }
+  } catch (e) { toast(errMsg(e), true); }
+};
 $('#snapshots').onchange = fillVersions;
 $('#new-dlg').addEventListener('close', async () => {
   if ($('#new-dlg').returnValue !== 'ok') return;
@@ -565,6 +574,17 @@ $('#inst-cover-pick').onclick = async () => {
 };
 $('#inst-cover-reset').onclick = async () => {
   try { await api.invoke('instance-cover-clear', instEdit); await loadInstances(); paintInstCover(); } catch (e) { toast(errMsg(e), true); }
+};
+$('#inst-duplicate').onclick = async e => {
+  e.target.disabled = true;
+  try { const c = await api.invoke('duplicate', instEdit); $('#inst-dlg').close(); toast(t('is.duplicated', { name: c.name })); await loadInstances(); }
+  catch (err) { toast(errMsg(err), true); }
+  e.target.disabled = false;
+};
+$('#inst-export').onclick = async e => {
+  e.target.disabled = true;
+  try { const r = await api.invoke('export-pack', instEdit); if (r) toast(t('is.exported', r)); } catch (err) { toast(errMsg(err), true); }
+  e.target.disabled = false;
 };
 // save only on the Save button; a validation error keeps the dialog open
 instForm.onsubmit = async e => {

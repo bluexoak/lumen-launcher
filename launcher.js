@@ -376,18 +376,34 @@ function safeJoin(dir, rel) {
 
 async function installModpack(project, version, onProgress) {
   const file = version.files.find(f => f.primary) || version.files[0];
+  const tmp = path.join(P.tmp, crypto.randomUUID());
+  try {
+    await download(file.url, path.join(tmp, 'pack.mrpack'), { sha1: file.hashes.sha1 });
+    return await installPackFile(path.join(tmp, 'pack.mrpack'), { name: project.title, icon: project.icon_url,
+      banner: project.featured_gallery || project.gallery?.[0] || null, modpack: { project: project.project_id, version: version.version_number } }, onProgress);
+  } finally {
+    await fsp.rm(tmp, { recursive: true, force: true });
+  }
+}
+
+// a .mrpack from disk (exported by Lumen or another launcher); same checks as a Modrinth download
+async function importMrpack(file, onProgress) {
+  if (!/\.mrpack$/i.test(file) || !(await fsp.stat(file)).isFile()) throw new Error(I.t('err.mrpack'));
+  return installPackFile(file, {}, onProgress);
+}
+
+async function installPackFile(pack, meta, onProgress) {
   const tmp = path.join(P.tmp, crypto.randomUUID()), x = path.join(tmp, 'x');
   let inst;
   try {
     await fsp.mkdir(x, { recursive: true });
-    await download(file.url, path.join(tmp, 'pack.mrpack'), { sha1: file.hashes.sha1 });
-    await execFileP(TAR, ['-xf', path.join(tmp, 'pack.mrpack'), '-C', x]); // bsdtar refuses ../ and absolute paths
+    await execFileP(TAR, ['-xf', pack, '-C', x]); // bsdtar refuses ../ and absolute paths
     const idx = JSON.parse(await fsp.readFile(path.join(x, 'modrinth.index.json'), 'utf8'));
     const d = idx.dependencies;
     const loader = d['fabric-loader'] ? 'fabric' : d['quilt-loader'] ? 'quilt' : d.forge || d.neoforge ? null : 'vanilla';
     if (!loader) throw new Error(I.t('err.forge'));
-    inst = createInstance({ name: project.title, mc: d.minecraft, loader, loaderVersion: d['fabric-loader'] || d['quilt-loader'],
-      icon: project.icon_url, banner: project.featured_gallery || project.gallery?.[0] || null, modpack:{ project: project.project_id, version: version.version_number } });
+    inst = createInstance({ name: meta.name || String(idx.name || 'Modpack').slice(0, 40), mc: d.minecraft, loader, loaderVersion: d['fabric-loader'] || d['quilt-loader'],
+      icon: meta.icon || null, banner: meta.banner || null, modpack: meta.modpack || { version: String(idx.versionId || '1.0.0').slice(0, 40) } });
     const dir = instDir(inst.id);
     const files = idx.files.filter(f => f.env?.client !== 'unsupported');
     let done = 0;
@@ -405,6 +421,60 @@ async function installModpack(project, version, onProgress) {
   } catch (e) {
     if (inst) await deleteInstance(inst.id);
     throw e;
+  } finally {
+    await fsp.rm(tmp, { recursive: true, force: true });
+  }
+}
+
+// ---------- instance tools: playtime, duplicate, .mrpack export ----------
+function addPlaytime(id, ms) {
+  try { const i = getInstance(id); saveInstance({ ...i, playtime: (i.playtime || 0) + Math.max(0, ms) }); } catch {} // instance deleted while running
+}
+
+// full copy, worlds included; the copy starts with its own history
+async function duplicateInstance(id) {
+  const { playtime, lastPlayed, ...src } = getInstance(id);
+  const copy = createInstance({ ...src, name: I.t('inst.copy_name', { name: src.name }).slice(0, 40) });
+  await fsp.cp(instDir(id), instDir(copy.id), { recursive: true });
+  saveInstance({ ...src, id: copy.id, name: copy.name, created: copy.created });
+  return getInstance(copy.id);
+}
+
+// Modrinth's pack format: files Modrinth knows go in as verified download links, the rest into overrides/
+// ponytail: worlds (saves/), logs and screenshots stay out; add a "with worlds" option if people ask for it
+const EXPORT_PATHS = ['mods', 'resourcepacks', 'shaderpacks', 'config', 'defaultconfigs', 'kubejs', 'options.txt'];
+async function exportMrpack(id, dest) {
+  const inst = getInstance(id), dir = instDir(id);
+  const rels = [];
+  for (const p of EXPORT_PATHS) {
+    const abs = path.join(dir, p);
+    if (!fs.existsSync(abs)) continue;
+    if ((await fsp.stat(abs)).isFile()) { rels.push(p); continue; }
+    for (const e of await fsp.readdir(abs, { recursive: true, withFileTypes: true }))
+      if (e.isFile()) rels.push(path.relative(dir, path.join(e.parentPath ?? e.path, e.name)).split(path.sep).join('/'));
+  }
+  const content = rels.filter(r => /^(mods|resourcepacks|shaderpacks)\/[^/]+\.(jar|zip)$/i.test(r));
+  const sha1 = {};
+  for (const r of content) sha1[r] = await sha1File(path.join(dir, r));
+  let known = {};
+  if (content.length) try { known = await postJson(`${MR}/version_files`, { hashes: Object.values(sha1), algorithm: 'sha1' }); } catch {} // offline: everything goes into overrides
+  const files = [], overrides = [];
+  for (const r of rels) {
+    const f = sha1[r] && known[sha1[r]]?.files.find(f => f.hashes.sha1 === sha1[r]);
+    if (f && packHostAllowed(f.url)) files.push({ path: r, hashes: { sha1: f.hashes.sha1, sha512: f.hashes.sha512 }, downloads: [f.url], fileSize: f.size });
+    else overrides.push(r);
+  }
+  const loaderKey = { fabric: 'fabric-loader', quilt: 'quilt-loader' }[inst.loader];
+  const index = { formatVersion: 1, game: 'minecraft', versionId: inst.modpack?.version || '1.0.0', name: inst.name, files,
+    dependencies: { minecraft: inst.mc, ...(loaderKey ? { [loaderKey]: inst.loaderVersion } : {}) } };
+  const tmp = path.join(P.tmp, crypto.randomUUID());
+  try {
+    await fsp.mkdir(tmp, { recursive: true });
+    await fsp.writeFile(path.join(tmp, 'modrinth.index.json'), JSON.stringify(index, null, 2));
+    for (const r of overrides) await fsp.cp(path.join(dir, r), path.join(tmp, 'overrides', r));
+    await fsp.rm(dest, { force: true });
+    await execFileP(TAR, ['-c', '--format', 'zip', '-f', dest, '-C', tmp, 'modrinth.index.json', ...(overrides.length ? ['overrides'] : [])]);
+    return { linked: files.length, bundled: overrides.length };
   } finally {
     await fsp.rm(tmp, { recursive: true, force: true });
   }
@@ -507,7 +577,7 @@ function modFile(id, file, k = KINDS.mod) {
 const removeMod = (id, file, kind) => fsp.rm(modFile(id, file, kindOf(getInstance(id), kind)));
 
 module.exports = { ROOT, instDir, listInstances, getInstance, saveInstance, createInstance, deleteInstance, updateInstance, setInstanceCover, clearInstanceCover, getSettings, saveSettings,
-  mcVersions, latestLoader, launch, searchModpacks, modpackVersions, installModpack, listMods, searchMods, installMod, updateMod, removeMod };
+  mcVersions, latestLoader, launch, searchModpacks, modpackVersions, installModpack, importMrpack, exportMrpack, duplicateInstance, addPlaytime, listMods, searchMods, installMod, updateMod, removeMod };
 
 if (require.main === module) { // node launcher.js → self-check
   const assert = require('assert');
